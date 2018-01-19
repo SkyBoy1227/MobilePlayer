@@ -20,6 +20,7 @@ import com.sky.app.mobileplayer.R;
 public class MainActivity extends AppCompatActivity {
     private FrameLayout fl_main_content;
     private RadioGroup rg_bottom_tag;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
