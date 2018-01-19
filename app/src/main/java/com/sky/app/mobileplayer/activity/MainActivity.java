@@ -1,15 +1,16 @@
 package com.sky.app.mobileplayer.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+import android.widget.RadioGroup;
+
+import com.sky.app.mobileplayer.R;
 
 /**
  * Created with Android Studio.
- * 描述: ${DESCRIPTION}
+ * 描述: 主页面
  * Date: 2018/1/19
  * Time: 10:44
  *
@@ -17,14 +18,14 @@ import android.widget.TextView;
  * @version ${VERSION}
  */
 public class MainActivity extends AppCompatActivity {
+    private FrameLayout fl_main_content;
+    private RadioGroup rg_bottom_tag;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TextView textView = new TextView(this);
-        textView.setText("我是主页面");
-        textView.setTextSize(30);
-        textView.setTextColor(Color.RED);
-        textView.setGravity(Gravity.CENTER);
-        setContentView(textView);
+        setContentView(R.layout.activity_main);
+        fl_main_content = findViewById(R.id.fl_main_content);
+        rg_bottom_tag = findViewById(R.id.rg_bottom_tag);
+        rg_bottom_tag.check(R.id.rb_video);
     }
 }
