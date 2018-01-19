@@ -29,6 +29,10 @@ public abstract class BasePager {
      * 接收各个页面的实例
      */
     public View rootView;
+    /**
+     * 是否初始化数据
+     */
+    public boolean isInitData;
 
     public BasePager(Context context) {
         this.context = context;

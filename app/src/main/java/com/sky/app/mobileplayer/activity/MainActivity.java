@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 
 import com.sky.app.mobileplayer.R;
@@ -28,7 +27,6 @@ import java.util.ArrayList;
  * @version ${VERSION}
  */
 public class MainActivity extends AppCompatActivity {
-    private FrameLayout fl_main_content;
     private RadioGroup rg_bottom_tag;
     /**
      * 页面集合
@@ -43,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fl_main_content = findViewById(R.id.fl_main_content);
         rg_bottom_tag = findViewById(R.id.rg_bottom_tag);
         basePagers = new ArrayList<>();
         //添加各个页面
@@ -68,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             }
             setFragment();
         });
+        //默认显示主页
         rg_bottom_tag.check(R.id.rb_video);
     }
 
@@ -86,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
     private BasePager getBasePager() {
         BasePager basePager = basePagers.get(position);
-        if (basePager != null) {
+        if (basePager != null && !basePager.isInitData) {
             basePager.initData();
+            basePager.isInitData = true;
         }
         return basePager;
     }
