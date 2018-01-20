@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sky.app.mobileplayer.view.TitleBar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="#ff3097fd"
@@ -25,6 +25,7 @@
         android:textColor="@drawable/tv_search_color_selector" />
 
     <RelativeLayout
+        android:id="@+id/rl_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp">
@@ -48,4 +49,4 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:src="@mipmap/ic_topbanner_record" />
-</LinearLayout>
+</com.sky.app.mobileplayer.view.TitleBar>
