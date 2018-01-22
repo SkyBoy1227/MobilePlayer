@@ -1,11 +1,12 @@
 package com.sky.app.mobileplayer.pager;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.Gravity;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.base.BasePager;
 import com.sky.app.mobileplayer.utils.LogUtil;
 
@@ -19,7 +20,9 @@ import com.sky.app.mobileplayer.utils.LogUtil;
  * @version ${VERSION}
  */
 public class VideoPager extends BasePager {
-    private TextView textView;
+    private ListView listView;
+    private TextView tv_nomedia;
+    private ProgressBar pb_loading;
 
     public VideoPager(Context context) {
         super(context);
@@ -32,11 +35,11 @@ public class VideoPager extends BasePager {
      */
     @Override
     public View initView() {
-        textView = new TextView(context);
-        textView.setTextSize(30);
-        textView.setTextColor(Color.RED);
-        textView.setGravity(Gravity.CENTER);
-        return textView;
+        View view = View.inflate(context, R.layout.video_pager, null);
+        listView = view.findViewById(R.id.listView);
+        tv_nomedia = view.findViewById(R.id.tv_nomedia);
+        pb_loading = view.findViewById(R.id.pb_loading);
+        return view;
     }
 
 
@@ -46,6 +49,5 @@ public class VideoPager extends BasePager {
         LogUtil.e("本地视频页面的数据被初始化了。。。");
         //联网
         //音频内容
-        textView.setText("本地视频的内容");
     }
 }
