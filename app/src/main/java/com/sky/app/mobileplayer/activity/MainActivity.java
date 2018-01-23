@@ -114,20 +114,16 @@ public class MainActivity extends AppCompatActivity {
      */
     private void requestPermission() {
         //判断Android版本是否大于23
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int readExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-
-            if (readExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_CODE_ASK_READ_EXTERNAL_STORAGE);
-                //如果权限未通过验证，则初始化标志要重置为false
-                if (basePager != null && basePager.isInitData) {
-                    basePager.isInitData = false;
-                }
-                return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE_ASK_READ_EXTERNAL_STORAGE);
+            //如果权限未通过验证，则初始化标志要重置为false，即未初始化状态
+            if (basePager != null && basePager.isInitData) {
+                basePager.isInitData = false;
             }
         }
-        setInitData();
     }
 
     /**
