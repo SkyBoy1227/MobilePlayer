@@ -19,7 +19,6 @@ import com.sky.app.mobileplayer.adapter.VideoPagerAdapter;
 import com.sky.app.mobileplayer.base.BasePager;
 import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.utils.LogUtil;
-import com.sky.app.mobileplayer.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,6 @@ public class VideoPager extends BasePager {
      * 数据集合
      */
     private List<MediaItem> mediaItems;
-    private Utils utils;
     private VideoPagerAdapter adapter;
 
     @SuppressLint("HandlerLeak")
@@ -72,7 +70,7 @@ public class VideoPager extends BasePager {
 
     public VideoPager(Context context) {
         super(context);
-        utils = new Utils();
+        threadPool = Executors.newFixedThreadPool(5);
     }
 
     /**
@@ -103,7 +101,6 @@ public class VideoPager extends BasePager {
      */
     private void getDataFromLocal() {
         mediaItems = new ArrayList<>();
-        threadPool = Executors.newFixedThreadPool(5);
         threadPool.submit(() -> {
             SystemClock.sleep(2000);
             ContentResolver contentResolver = context.getContentResolver();
