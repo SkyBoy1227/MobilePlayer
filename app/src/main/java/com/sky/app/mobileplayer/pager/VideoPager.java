@@ -3,6 +3,7 @@ package com.sky.app.mobileplayer.pager;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
@@ -13,8 +14,10 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sky.app.mobileplayer.R;
+import com.sky.app.mobileplayer.activity.SystemVideoPlayerActivity;
 import com.sky.app.mobileplayer.adapter.VideoPagerAdapter;
 import com.sky.app.mobileplayer.base.BasePager;
 import com.sky.app.mobileplayer.domain.MediaItem;
@@ -84,6 +87,20 @@ public class VideoPager extends BasePager {
         listView = view.findViewById(R.id.listView);
         tv_nomedia = view.findViewById(R.id.tv_nomedia);
         pb_loading = view.findViewById(R.id.pb_loading);
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            MediaItem mediaItem = mediaItems.get(position);
+            Toast.makeText(context, "mediaItem = " + mediaItem.toString(), Toast.LENGTH_SHORT).show();
+
+            // 1.调起系统所有的播放器--隐式意图
+//            Intent intent = new Intent();
+//            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
+//            context.startActivity(intent);
+
+            // 2.调用自己写的播放器--显示意图
+            Intent intent = new Intent(context, SystemVideoPlayerActivity.class);
+            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
+            context.startActivity(intent);
+        });
         return view;
     }
 
