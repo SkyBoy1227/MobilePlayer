@@ -9,15 +9,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.text.format.Formatter;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sky.app.mobileplayer.R;
+import com.sky.app.mobileplayer.adapter.VideoPagerAdapter;
 import com.sky.app.mobileplayer.base.BasePager;
 import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.utils.LogUtil;
@@ -60,7 +58,7 @@ public class VideoPager extends BasePager {
             super.handleMessage(msg);
             if (mediaItems != null && mediaItems.size() > 0) {
                 //隐藏文本，显示列表
-                adapter = new VideoPagerAdapter();
+                adapter = new VideoPagerAdapter(context, mediaItems);
                 listView.setAdapter(adapter);
                 tv_nomedia.setVisibility(View.GONE);
             } else {
@@ -124,6 +122,8 @@ public class VideoPager extends BasePager {
             };
             Cursor cursor = contentResolver.query(uri, projection, null, null, null);
             if (cursor != null) {
+                // 清空集合
+                mediaItems.clear();
                 while (cursor.moveToNext()) {
                     MediaItem mediaItem = new MediaItem();
                     mediaItems.add(mediaItem);
@@ -148,53 +148,5 @@ public class VideoPager extends BasePager {
             //发送消息
             handler.sendEmptyMessage(1);
         });
-    }
-
-    class VideoPagerAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mediaItems.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mediaItems.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if (convertView == null) {
-                convertView = View.inflate(context, R.layout.item_video_pager, null);
-                holder = new ViewHolder(convertView);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            // 根据position得到数据
-            MediaItem mediaItem = mediaItems.get(position);
-            holder.tv_name.setText(mediaItem.getName());
-            holder.tv_size.setText(Formatter.formatFileSize(context, mediaItem.getSize()));
-            holder.tv_time.setText(utils.stringForTime((int) mediaItem.getDuration()));
-            return convertView;
-        }
-    }
-
-    static class ViewHolder {
-        TextView tv_name;
-        TextView tv_size;
-        TextView tv_time;
-
-        public ViewHolder(View view) {
-            tv_name = view.findViewById(R.id.tv_name);
-            tv_size = view.findViewById(R.id.tv_size);
-            tv_time = view.findViewById(R.id.tv_time);
-        }
     }
 }
