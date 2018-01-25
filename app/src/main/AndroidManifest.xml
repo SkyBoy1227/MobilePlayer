@@ -19,6 +19,9 @@
         </activity>
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.SystemVideoPlayerActivity" />
+        <activity
+            android:name=".activity.TestBActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" />
     </application>
 
 </manifest>

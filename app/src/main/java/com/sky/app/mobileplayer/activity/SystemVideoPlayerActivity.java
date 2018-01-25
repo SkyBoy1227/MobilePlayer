@@ -1,14 +1,17 @@
 package com.sky.app.mobileplayer.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.sky.app.mobileplayer.R;
+import com.sky.app.mobileplayer.utils.LogUtil;
 
 /**
  * Created with Android Studio.
@@ -26,6 +29,7 @@ public class SystemVideoPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.e("onCreate");
         setContentView(R.layout.activity_system_video_player);
         videoView = findViewById(R.id.videoview);
         // 得到播放地址
@@ -45,6 +49,53 @@ public class SystemVideoPlayerActivity extends AppCompatActivity {
                 Toast.makeText(this, "播放完成 = " + uri, Toast.LENGTH_SHORT).show());
 
         videoView.setVideoURI(uri);
+        // 设置控制面板
         videoView.setMediaController(new MediaController(this));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            Intent intent = new Intent(this, TestBActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LogUtil.e("onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtil.e("onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtil.e("onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LogUtil.e("onStop");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        LogUtil.e("onRestart");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtil.e("onDestroy");
     }
 }
