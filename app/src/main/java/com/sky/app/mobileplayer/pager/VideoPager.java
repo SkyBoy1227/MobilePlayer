@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ListView;
@@ -119,7 +118,6 @@ public class VideoPager extends BasePager {
     private void getDataFromLocal() {
         mediaItems = new ArrayList<>();
         threadPool.submit(() -> {
-            SystemClock.sleep(2000);
             ContentResolver contentResolver = context.getContentResolver();
             Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
             String[] projection = {
