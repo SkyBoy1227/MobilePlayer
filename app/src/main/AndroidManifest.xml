@@ -22,7 +22,8 @@
             android:configChanges="keyboardHidden|screenSize|orientation" />
         <activity
             android:name=".activity.SystemVideoPlayerActivity"
-            android:configChanges="keyboardHidden|screenSize|orientation" />
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
             android:name=".activity.TestBActivity"
             android:theme="@style/Theme.AppCompat.Dialog" />

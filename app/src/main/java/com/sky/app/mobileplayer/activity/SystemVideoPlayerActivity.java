@@ -1,12 +1,10 @@
 package com.sky.app.mobileplayer.activity;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
-import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -22,7 +20,7 @@ import com.sky.app.mobileplayer.utils.LogUtil;
  * @author 晏琦云
  * @version ${VERSION}
  */
-public class SystemVideoPlayerActivity extends AppCompatActivity {
+public class SystemVideoPlayerActivity extends Activity {
     private VideoView videoView;
     private Uri uri;
 
@@ -50,16 +48,11 @@ public class SystemVideoPlayerActivity extends AppCompatActivity {
 
         videoView.setVideoURI(uri);
         // 设置控制面板
-        videoView.setMediaController(new MediaController(this));
+//        videoView.setMediaController(new MediaController(this));
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            Intent intent = new Intent(this, TestBActivity.class);
-            startActivity(intent);
-            return true;
-        }
         return super.onTouchEvent(event);
     }
 
