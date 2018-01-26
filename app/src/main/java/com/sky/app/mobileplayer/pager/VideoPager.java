@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.activity.SystemVideoPlayerActivity;
@@ -88,7 +87,7 @@ public class VideoPager extends BasePager {
         pb_loading = view.findViewById(R.id.pb_loading);
         listView.setOnItemClickListener((parent, view1, position, id) -> {
             MediaItem mediaItem = mediaItems.get(position);
-            Toast.makeText(context, "mediaItem = " + mediaItem.toString(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "mediaItem = " + mediaItem.toString(), Toast.LENGTH_SHORT).show();
 
             // 1.调起系统所有的播放器--隐式意图
 //            Intent intent = new Intent();
