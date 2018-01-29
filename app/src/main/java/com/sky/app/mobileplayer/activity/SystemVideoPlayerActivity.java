@@ -157,7 +157,18 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         findViews();
         // 得到播放地址
         uri = getIntent().getData();
+        setListener();
+        if (uri != null) {
+            videoView.setVideoURI(uri);
+        }
+        // 设置控制面板
+//        videoView.setMediaController(new MediaController(this));
+    }
 
+    /**
+     * 设置监听器
+     */
+    private void setListener() {
         // 监听准备好了
         videoView.setOnPreparedListener(mp -> {
             // 得到总进度
@@ -180,9 +191,39 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         videoView.setOnCompletionListener(mp ->
                 Toast.makeText(this, "播放完成 = " + uri, Toast.LENGTH_SHORT).show());
 
-        videoView.setVideoURI(uri);
-        // 设置控制面板
-//        videoView.setMediaController(new MediaController(this));
+        // 设置SeekBar状态变化的监听
+        seekbarVideo.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            /**
+             * 当手指滑动的时候，会引起SeekBar进度变化，会回调这个方法
+             * @param seekBar
+             * @param progress
+             * @param fromUser 如果是用户引起的，true 否则 false
+             */
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    videoView.seekTo(progress);
+                }
+            }
+
+            /**
+             * 当手指触碰的时候回调这个方法
+             * @param seekBar
+             */
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            /**
+             * 当手指离开的时候回调这个方法
+             * @param seekBar
+             */
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     @Override
