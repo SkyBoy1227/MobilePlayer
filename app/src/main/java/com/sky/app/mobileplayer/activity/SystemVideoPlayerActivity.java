@@ -2,6 +2,10 @@ package com.sky.app.mobileplayer.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +58,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoNext;
     private Button btnSwitchScreen;
     private Utils utils;
+    /**
+     * 电量改变的广播接收器
+     */
+    private MyReceiver receiver;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -153,16 +162,50 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         super.onCreate(savedInstanceState);
         LogUtil.e("onCreate");
         setContentView(R.layout.activity_system_video_player);
-        utils = new Utils();
+        initData();
         findViews();
+        setListener();
         // 得到播放地址
         uri = getIntent().getData();
-        setListener();
         if (uri != null) {
             videoView.setVideoURI(uri);
         }
         // 设置控制面板
 //        videoView.setMediaController(new MediaController(this));
+    }
+
+    private void initData() {
+        utils = new Utils();
+        // 注册电量改变的广播
+        receiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(receiver, intentFilter);
+    }
+
+    class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int level = intent.getIntExtra("level", 0);
+            if (level <= 0) {
+                ivBattery.setImageResource(R.mipmap.ic_battery_0);
+            } else if (level <= 10) {
+                ivBattery.setImageResource(R.mipmap.ic_battery_10);
+            } else if (level <= 20) {
+                ivBattery.setImageResource(R.mipmap.ic_battery_20);
+            } else if (level <= 40) {
+                ivBattery.setImageResource(R.mipmap.ic_battery_40);
+            } else if (level <= 60) {
+                ivBattery.setImageResource(R.mipmap.ic_battery_60);
+            } else if (level <= 80) {
+                ivBattery.setImageResource(R.mipmap.ic_battery_80);
+            } else if (level <= 100) {
+                ivBattery.setImageResource(R.mipmap.ic_battery_100);
+            } else {
+                ivBattery.setImageResource(R.mipmap.ic_battery_100);
+            }
+        }
     }
 
     /**
@@ -263,6 +306,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
+        // 释放资源的时候，先释放子类，再释放父类
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
         super.onDestroy();
         LogUtil.e("onDestroy");
     }
