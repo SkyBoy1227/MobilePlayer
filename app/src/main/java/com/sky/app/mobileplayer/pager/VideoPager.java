@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -22,7 +23,6 @@ import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.utils.LogUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,7 +47,7 @@ public class VideoPager extends BasePager {
     /**
      * 数据集合
      */
-    private List<MediaItem> mediaItems;
+    private ArrayList<MediaItem> mediaItems;
     private VideoPagerAdapter adapter;
 
     @SuppressLint("HandlerLeak")
@@ -95,8 +95,16 @@ public class VideoPager extends BasePager {
 //            context.startActivity(intent);
 
             // 2.调用自己写的播放器--显示意图
+//            Intent intent = new Intent(context, SystemVideoPlayerActivity.class);
+//            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
+//            context.startActivity(intent);
+
+            // 3.传递列表数据-对象-序列化
             Intent intent = new Intent(context, SystemVideoPlayerActivity.class);
-            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", mediaItems);
+            intent.putExtras(bundle);
+            intent.putExtra("position", position);
             context.startActivity(intent);
         });
         return view;

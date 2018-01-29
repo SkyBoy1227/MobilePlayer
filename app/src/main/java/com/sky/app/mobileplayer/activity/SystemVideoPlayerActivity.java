@@ -22,10 +22,12 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.sky.app.mobileplayer.R;
+import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.utils.LogUtil;
 import com.sky.app.mobileplayer.utils.Utils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -65,6 +67,14 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 电量改变的广播接收器
      */
     private MyReceiver receiver;
+    /**
+     * 传入进来的视频列表
+     */
+    private ArrayList<MediaItem> mediaItems;
+    /**
+     * 要播放的列表中的具体位置
+     */
+    private int position;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -180,13 +190,32 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         initData();
         findViews();
         setListener();
-        // 得到播放地址
-        uri = getIntent().getData();
-        if (uri != null) {
-            videoView.setVideoURI(uri);
-        }
+        getData();
+        setData();
         // 设置控制面板
 //        videoView.setMediaController(new MediaController(this));
+    }
+
+    private void getData() {
+        mediaItems = (ArrayList<MediaItem>) getIntent().getSerializableExtra("videolist");
+        position = getIntent().getIntExtra("position", 0);
+        // 得到播放地址
+        uri = getIntent().getData();
+    }
+
+    private void setData() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            MediaItem mediaItem = mediaItems.get(position);
+            // 设置视频名称
+            tvName.setText(mediaItem.getName());
+            videoView.setVideoPath(mediaItem.getData());
+        } else if (uri != null) {
+            // 设置视频名称
+            tvName.setText(uri.toString());
+            videoView.setVideoURI(uri);
+        } else {
+            Toast.makeText(this, "对不起，你没有传入视频信息", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initData() {

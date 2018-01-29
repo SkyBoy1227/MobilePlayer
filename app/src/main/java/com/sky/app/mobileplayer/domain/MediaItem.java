@@ -1,5 +1,7 @@
 package com.sky.app.mobileplayer.domain;
 
+import java.io.Serializable;
+
 /**
  * Created with Android Studio.
  * 描述: 视频/音频文件
@@ -9,7 +11,8 @@ package com.sky.app.mobileplayer.domain;
  * @author 晏琦云
  * @version ${VERSION}
  */
-public class MediaItem {
+public class MediaItem implements Serializable {
+    private static final long serialVersionUID = -3385260687855510506L;
     /**
      * 名称
      */
