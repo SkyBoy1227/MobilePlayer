@@ -162,6 +162,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             finish();
         } else if (v == btnVideoPre) {
             // Handle clicks for btnVideoPre
+            playPreVideo();
         } else if (v == btnVideoStartPause) {
             // Handle clicks for btnVideoStartPause
             if (videoView.isPlaying()) {
@@ -175,12 +176,28 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 // 按钮状态：暂停
                 btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_pause_selector);
             }
-
         } else if (v == btnVideoNext) {
             // Handle clicks for btnVideoNext
             playNextVideo();
         } else if (v == btnSwitchScreen) {
             // Handle clicks for btnSwitchScreen
+        }
+    }
+
+    /**
+     * 播放上一个视频
+     */
+    private void playPreVideo() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            position--;
+            if (position < mediaItems.size()) {
+                MediaItem item = mediaItems.get(position);
+                tvName.setText(item.getName());
+                videoView.setVideoPath(item.getData());
+                setButtonState();
+            }
+        } else if (uri != null) {
+            setButtonState();
         }
     }
 
@@ -346,8 +363,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         });
 
         // 监听播放完成
-        videoView.setOnCompletionListener(mp ->
-                Toast.makeText(this, "播放完成 = " + uri, Toast.LENGTH_SHORT).show());
+        videoView.setOnCompletionListener(mp -> {
+            playNextVideo();
+        });
 
         // 设置SeekBar状态变化的监听
         seekbarVideo.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
