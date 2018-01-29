@@ -25,6 +25,9 @@ import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.utils.LogUtil;
 import com.sky.app.mobileplayer.utils.Utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created with Android Studio.
  * 描述: ${DESCRIPTION}
@@ -76,6 +79,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     seekbarVideo.setProgress(currentPosition);
                     // 设置当前进度文本
                     tvCurrentTime.setText(utils.stringForTime(currentPosition));
+                    // 设置系统时间
+                    tvSystemTime.setText(getSystemTime());
                     // 3.每秒更新一次
                     handler.removeMessages(PROGRESS);
                     handler.sendEmptyMessageDelayed(PROGRESS, 1000);
@@ -85,6 +90,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             }
         }
     };
+
+    /**
+     * 得到系统时间
+     *
+     * @return
+     */
+    private String getSystemTime() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        return format.format(new Date());
+    }
 
     /**
      * Find the Views in the layout<br />
@@ -188,23 +203,32 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         @Override
         public void onReceive(Context context, Intent intent) {
             int level = intent.getIntExtra("level", 0);
-            if (level <= 0) {
-                ivBattery.setImageResource(R.mipmap.ic_battery_0);
-            } else if (level <= 10) {
-                ivBattery.setImageResource(R.mipmap.ic_battery_10);
-            } else if (level <= 20) {
-                ivBattery.setImageResource(R.mipmap.ic_battery_20);
-            } else if (level <= 40) {
-                ivBattery.setImageResource(R.mipmap.ic_battery_40);
-            } else if (level <= 60) {
-                ivBattery.setImageResource(R.mipmap.ic_battery_60);
-            } else if (level <= 80) {
-                ivBattery.setImageResource(R.mipmap.ic_battery_80);
-            } else if (level <= 100) {
-                ivBattery.setImageResource(R.mipmap.ic_battery_100);
-            } else {
-                ivBattery.setImageResource(R.mipmap.ic_battery_100);
-            }
+            setBattery(level);
+        }
+    }
+
+    /**
+     * 设置电量
+     *
+     * @param level
+     */
+    private void setBattery(int level) {
+        if (level <= 0) {
+            ivBattery.setImageResource(R.mipmap.ic_battery_0);
+        } else if (level <= 10) {
+            ivBattery.setImageResource(R.mipmap.ic_battery_10);
+        } else if (level <= 20) {
+            ivBattery.setImageResource(R.mipmap.ic_battery_20);
+        } else if (level <= 40) {
+            ivBattery.setImageResource(R.mipmap.ic_battery_40);
+        } else if (level <= 60) {
+            ivBattery.setImageResource(R.mipmap.ic_battery_60);
+        } else if (level <= 80) {
+            ivBattery.setImageResource(R.mipmap.ic_battery_80);
+        } else if (level <= 100) {
+            ivBattery.setImageResource(R.mipmap.ic_battery_100);
+        } else {
+            ivBattery.setImageResource(R.mipmap.ic_battery_100);
         }
     }
 
