@@ -1,8 +1,11 @@
 package com.sky.app.mobileplayer.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.widget.VideoView;
 
 import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.utils.LogUtil;
+import com.sky.app.mobileplayer.utils.Utils;
 
 /**
  * Created with Android Studio.
@@ -27,6 +31,10 @@ import com.sky.app.mobileplayer.utils.LogUtil;
  * @version ${VERSION}
  */
 public class SystemVideoPlayerActivity extends Activity implements View.OnClickListener {
+    /**
+     * 视频进度的更新
+     */
+    private static final int PROGRESS = 1;
     private VideoView videoView;
     private Uri uri;
     private LinearLayout llTop;
@@ -45,6 +53,29 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoStartPause;
     private Button btnVideoNext;
     private Button btnSwitchScreen;
+    private Utils utils;
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case PROGRESS:
+                    // 1.得到当前进度
+                    int currentPosition = videoView.getCurrentPosition();
+                    // 2.SeekBar.setProgress(当前进度)
+                    seekbarVideo.setProgress(currentPosition);
+                    // 设置当前进度文本
+                    tvCurrentTime.setText(utils.stringForTime(currentPosition));
+                    // 3.每秒更新一次
+                    handler.removeMessages(PROGRESS);
+                    handler.sendEmptyMessageDelayed(PROGRESS, 1000);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     /**
      * Find the Views in the layout<br />
@@ -53,22 +84,22 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * (http://www.buzzingandroid.com/tools/android-layout-finder)
      */
     private void findViews() {
-        llTop = (LinearLayout) findViewById(R.id.ll_top);
-        tvName = (TextView) findViewById(R.id.tv_name);
-        ivBattery = (ImageView) findViewById(R.id.iv_battery);
-        tvSystemTime = (TextView) findViewById(R.id.tv_system_time);
-        btnVoice = (Button) findViewById(R.id.btn_voice);
-        seekbarAudio = (SeekBar) findViewById(R.id.seekbar_audio);
-        btnSwitchPlayer = (Button) findViewById(R.id.btn_switch_player);
-        llBottom = (LinearLayout) findViewById(R.id.ll_bottom);
-        tvCurrentTime = (TextView) findViewById(R.id.tv_current_time);
-        seekbarVideo = (SeekBar) findViewById(R.id.seekbar_video);
-        tvDuration = (TextView) findViewById(R.id.tv_duration);
-        btnExit = (Button) findViewById(R.id.btn_exit);
-        btnVideoPre = (Button) findViewById(R.id.btn_video_pre);
-        btnVideoStartPause = (Button) findViewById(R.id.btn_video_start_pause);
-        btnVideoNext = (Button) findViewById(R.id.btn_video_next);
-        btnSwitchScreen = (Button) findViewById(R.id.btn_switch_screen);
+        llTop = findViewById(R.id.ll_top);
+        tvName = findViewById(R.id.tv_name);
+        ivBattery = findViewById(R.id.iv_battery);
+        tvSystemTime = findViewById(R.id.tv_system_time);
+        btnVoice = findViewById(R.id.btn_voice);
+        seekbarAudio = findViewById(R.id.seekbar_audio);
+        btnSwitchPlayer = findViewById(R.id.btn_switch_player);
+        llBottom = findViewById(R.id.ll_bottom);
+        tvCurrentTime = findViewById(R.id.tv_current_time);
+        seekbarVideo = findViewById(R.id.seekbar_video);
+        tvDuration = findViewById(R.id.tv_duration);
+        btnExit = findViewById(R.id.btn_exit);
+        btnVideoPre = findViewById(R.id.btn_video_pre);
+        btnVideoStartPause = findViewById(R.id.btn_video_start_pause);
+        btnVideoNext = findViewById(R.id.btn_video_next);
+        btnSwitchScreen = findViewById(R.id.btn_switch_screen);
         videoView = findViewById(R.id.videoview);
 
         btnVoice.setOnClickListener(this);
@@ -122,12 +153,22 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         super.onCreate(savedInstanceState);
         LogUtil.e("onCreate");
         setContentView(R.layout.activity_system_video_player);
+        utils = new Utils();
         findViews();
         // 得到播放地址
         uri = getIntent().getData();
 
         // 监听准备好了
-        videoView.setOnPreparedListener(mp -> videoView.start());
+        videoView.setOnPreparedListener(mp -> {
+            // 得到总进度
+            int duration = videoView.getDuration();
+            seekbarVideo.setMax(duration);
+            // 设置总进度文本
+            tvDuration.setText(utils.stringForTime(duration));
+            handler.sendEmptyMessage(PROGRESS);
+            // 播放视频
+            videoView.start();
+        });
 
         // 监听播放出错
         videoView.setOnErrorListener((mp, what, extra) -> {
@@ -183,11 +224,5 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.e("onDestroy");
-    }
-
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
     }
 }
