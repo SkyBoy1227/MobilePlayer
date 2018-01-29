@@ -159,6 +159,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             // Handle clicks for btnSwitchPlayer
         } else if (v == btnExit) {
             // Handle clicks for btnExit
+            finish();
         } else if (v == btnVideoPre) {
             // Handle clicks for btnVideoPre
         } else if (v == btnVideoStartPause) {
@@ -177,9 +178,69 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
         } else if (v == btnVideoNext) {
             // Handle clicks for btnVideoNext
+            playNextVideo();
         } else if (v == btnSwitchScreen) {
             // Handle clicks for btnSwitchScreen
         }
+    }
+
+    /**
+     * 播放下一个视频
+     */
+    private void playNextVideo() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            position++;
+            if (position < mediaItems.size()) {
+                MediaItem item = mediaItems.get(position);
+                tvName.setText(item.getName());
+                videoView.setVideoPath(item.getData());
+                setButtonState();
+            }
+        } else if (uri != null) {
+            setButtonState();
+        }
+    }
+
+    /**
+     * 设置按钮状态
+     */
+    private void setButtonState() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            if (mediaItems.size() == 1) {
+                btnVideoPre.setEnabled(false);
+                btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+            } else {
+                if (position == 0) {
+                    btnVideoPre.setEnabled(false);
+                    btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+                } else if (position == mediaItems.size() - 1) {
+                    btnVideoNext.setEnabled(false);
+                    btnVideoNext.setBackgroundResource(R.mipmap.btn_next_gray);
+                } else {
+                    setButtonEnable(true);
+                }
+            }
+        } else if (uri != null) {
+            // 设置两个按钮灰色
+            setButtonEnable(false);
+        }
+    }
+
+    /**
+     * 设置按钮是否可用
+     *
+     * @param isEnable
+     */
+    private void setButtonEnable(boolean isEnable) {
+        if (isEnable) {
+            btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
+            btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
+        } else {
+            btnVideoNext.setBackgroundResource(R.mipmap.btn_next_gray);
+            btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+        }
+        btnVideoNext.setEnabled(isEnable);
+        btnVideoPre.setEnabled(isEnable);
     }
 
     @Override
@@ -216,6 +277,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         } else {
             Toast.makeText(this, "对不起，你没有传入视频信息", Toast.LENGTH_SHORT).show();
         }
+        setButtonState();
     }
 
     private void initData() {
