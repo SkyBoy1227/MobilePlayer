@@ -226,6 +226,18 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             if (mediaItems.size() == 1) {
                 btnVideoPre.setEnabled(false);
                 btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+            } else if (mediaItems.size() == 2) {
+                if (position == 0) {
+                    btnVideoPre.setEnabled(false);
+                    btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+                    btnVideoNext.setEnabled(true);
+                    btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
+                } else if (position == mediaItems.size() - 1) {
+                    btnVideoNext.setEnabled(false);
+                    btnVideoNext.setBackgroundResource(R.mipmap.btn_next_gray);
+                    btnVideoPre.setEnabled(true);
+                    btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
+                }
             } else {
                 if (position == 0) {
                     btnVideoPre.setEnabled(false);
