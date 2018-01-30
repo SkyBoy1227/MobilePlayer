@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,10 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 视频进度的更新
      */
     private static final int PROGRESS = 1;
+    /**
+     * 隐藏控制面板
+     */
+    private static final int HIDE_MEDIACONTROLLER = 2;
     private VideoView videoView;
     private Uri uri;
     private LinearLayout llTop;
@@ -63,6 +68,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoStartPause;
     private Button btnVideoNext;
     private Button btnSwitchScreen;
+    private RelativeLayout media_controller;
     private Utils utils;
     /**
      * 电量改变的广播接收器
@@ -80,6 +86,10 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 手势识别器
      */
     private GestureDetector detector;
+    /**
+     * 是否显示控制面板
+     */
+    private boolean isShowMediaController = false;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -87,6 +97,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case HIDE_MEDIACONTROLLER:
+                    hideMediaController();
+                    break;
                 case PROGRESS:
                     // 1.得到当前进度
                     int currentPosition = videoView.getCurrentPosition();
@@ -140,6 +153,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         btnVideoNext = findViewById(R.id.btn_video_next);
         btnSwitchScreen = findViewById(R.id.btn_switch_screen);
         videoView = findViewById(R.id.videoview);
+        media_controller = findViewById(R.id.media_controller);
 
         btnVoice.setOnClickListener(this);
         btnSwitchPlayer.setOnClickListener(this);
@@ -177,6 +191,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         } else if (v == btnSwitchScreen) {
             // Handle clicks for btnSwitchScreen
         }
+        handler.removeMessages(HIDE_MEDIACONTROLLER);
+        handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
     }
 
     /**
@@ -232,6 +248,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 设置按钮状态
      */
     private void setButtonState() {
+        // 按钮默认为暂停状态
+        btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_pause_selector);
         // 如果接收的是视频列表
         if (mediaItems != null && mediaItems.size() > 0) {
             if (mediaItems.size() == 1) {
@@ -316,6 +334,26 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             Toast.makeText(this, "对不起，你没有传入视频信息", Toast.LENGTH_SHORT).show();
         }
         setButtonState();
+        // 默认隐藏控制面板
+        hideMediaController();
+    }
+
+    /**
+     * 隐藏控制面板
+     */
+    private void hideMediaController() {
+        media_controller.setVisibility(View.GONE);
+        isShowMediaController = false;
+        handler.removeMessages(HIDE_MEDIACONTROLLER);
+    }
+
+    /**
+     * 显示控制面板
+     */
+    private void showMediaController() {
+        media_controller.setVisibility(View.VISIBLE);
+        isShowMediaController = true;
+        handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
     }
 
     private void initData() {
@@ -340,7 +378,12 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                Toast.makeText(SystemVideoPlayerActivity.this, "单击", Toast.LENGTH_SHORT).show();
+                if (isShowMediaController) {
+                    hideMediaController();
+                } else {
+                    showMediaController();
+                }
+//                Toast.makeText(SystemVideoPlayerActivity.this, "单击", Toast.LENGTH_SHORT).show();
                 return super.onSingleTapConfirmed(e);
             }
         });
@@ -428,7 +471,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
              */
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                handler.removeMessages(HIDE_MEDIACONTROLLER);
             }
 
             /**
@@ -437,7 +480,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
              */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
             }
         });
     }
