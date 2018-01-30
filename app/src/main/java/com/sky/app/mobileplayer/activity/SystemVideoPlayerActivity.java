@@ -21,12 +21,12 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.utils.LogUtil;
 import com.sky.app.mobileplayer.utils.Utils;
+import com.sky.app.mobileplayer.view.VideoView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -224,8 +224,6 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 videoView.setVideoPath(item.getData());
                 setButtonState();
             }
-        } else if (uri != null) {
-            setButtonState();
         }
     }
 
@@ -437,6 +435,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             handler.sendEmptyMessage(PROGRESS);
             // 播放视频
             videoView.start();
+            videoView.setVideoSize(mp.getVideoWidth(), mp.getVideoHeight());
         });
 
         // 监听播放出错
