@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -75,6 +76,10 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 要播放的列表中的具体位置
      */
     private int position;
+    /**
+     * 手势识别器
+     */
+    private GestureDetector detector;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -165,22 +170,29 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             playPreVideo();
         } else if (v == btnVideoStartPause) {
             // Handle clicks for btnVideoStartPause
-            if (videoView.isPlaying()) {
-                // 视频暂停
-                videoView.pause();
-                // 按钮状态：播放
-                btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_start_selector);
-            } else {
-                // 视频播放
-                videoView.start();
-                // 按钮状态：暂停
-                btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_pause_selector);
-            }
+            startAndPause();
         } else if (v == btnVideoNext) {
             // Handle clicks for btnVideoNext
             playNextVideo();
         } else if (v == btnSwitchScreen) {
             // Handle clicks for btnSwitchScreen
+        }
+    }
+
+    /**
+     * 视频播放或暂停
+     */
+    private void startAndPause() {
+        if (videoView.isPlaying()) {
+            // 视频暂停
+            videoView.pause();
+            // 按钮状态：播放
+            btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_start_selector);
+        } else {
+            // 视频播放
+            videoView.start();
+            // 按钮状态：暂停
+            btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_pause_selector);
         }
     }
 
@@ -313,6 +325,25 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(receiver, intentFilter);
+        detector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public void onLongPress(MotionEvent e) {
+                startAndPause();
+//                Toast.makeText(SystemVideoPlayerActivity.this, "长按", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                Toast.makeText(SystemVideoPlayerActivity.this, "双击", Toast.LENGTH_SHORT).show();
+                return super.onDoubleTap(e);
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                Toast.makeText(SystemVideoPlayerActivity.this, "单击", Toast.LENGTH_SHORT).show();
+                return super.onSingleTapConfirmed(e);
+            }
+        });
     }
 
     class MyReceiver extends BroadcastReceiver {
@@ -413,6 +444,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        detector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
