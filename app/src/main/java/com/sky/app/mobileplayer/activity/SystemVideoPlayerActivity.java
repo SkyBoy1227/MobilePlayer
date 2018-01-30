@@ -190,7 +190,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private void playPreVideo() {
         if (mediaItems != null && mediaItems.size() > 0) {
             position--;
-            if (position < mediaItems.size()) {
+            if (position >= 0) {
                 MediaItem item = mediaItems.get(position);
                 tvName.setText(item.getName());
                 videoView.setVideoPath(item.getData());
@@ -213,8 +213,6 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 videoView.setVideoPath(item.getData());
                 setButtonState();
             }
-        } else if (uri != null) {
-            setButtonState();
         }
     }
 
@@ -222,34 +220,33 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 设置按钮状态
      */
     private void setButtonState() {
+        // 如果接收的是视频列表
         if (mediaItems != null && mediaItems.size() > 0) {
             if (mediaItems.size() == 1) {
-                btnVideoPre.setEnabled(false);
-                btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
-            } else if (mediaItems.size() == 2) {
+                // 如果只有一个视频，则都按钮都设置为灰色
+                setButtonEnable(false);
+            } else {
                 if (position == 0) {
+                    // 如果播放的是第一个视频，则把“上一个”按钮设置为灰色
                     btnVideoPre.setEnabled(false);
                     btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+                    // 把“下一个"按钮设置可点击
                     btnVideoNext.setEnabled(true);
                     btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
                 } else if (position == mediaItems.size() - 1) {
+                    // 如果播放的是最后一个视频，则把“下一个”按钮设置为灰色
                     btnVideoNext.setEnabled(false);
                     btnVideoNext.setBackgroundResource(R.mipmap.btn_next_gray);
+                    // 把“上一个”按钮设置可点击
                     btnVideoPre.setEnabled(true);
                     btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
-                }
-            } else {
-                if (position == 0) {
-                    btnVideoPre.setEnabled(false);
-                    btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
-                } else if (position == mediaItems.size() - 1) {
-                    btnVideoNext.setEnabled(false);
-                    btnVideoNext.setBackgroundResource(R.mipmap.btn_next_gray);
                 } else {
+                    // 播放的视频既不是第一个，也不是最后一个，则将“上一个、下一个”按钮都设置可点击
                     setButtonEnable(true);
                 }
             }
         } else if (uri != null) {
+            // 如果接收的是单个播放地址
             // 设置两个按钮灰色
             setButtonEnable(false);
         }

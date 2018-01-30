@@ -86,7 +86,7 @@ public class VideoPager extends BasePager {
         tv_nomedia = view.findViewById(R.id.tv_nomedia);
         pb_loading = view.findViewById(R.id.pb_loading);
         listView.setOnItemClickListener((parent, view1, position, id) -> {
-            MediaItem mediaItem = mediaItems.get(position);
+//            MediaItem mediaItem = mediaItems.get(position);
 //            Toast.makeText(context, "mediaItem = " + mediaItem.toString(), Toast.LENGTH_SHORT).show();
 
             // 1.调起系统所有的播放器--隐式意图
