@@ -18,7 +18,8 @@
         android:id="@+id/rg_bottom_tag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="5dp">
 
         <RadioButton
             android:id="@+id/rb_video"
