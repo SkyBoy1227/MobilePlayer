@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -697,6 +698,39 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    /**
+     * 监听物理键，实现声音的调节
+     *
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            currentVolume--;
+            if (currentVolume < 0) {
+                currentVolume = 0;
+            }
+            isMute = false;
+            updateVolume(currentVolume);
+            handler.removeMessages(HIDE_MEDIACONTROLLER);
+            handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            currentVolume++;
+            if (currentVolume > maxVolume) {
+                currentVolume = maxVolume;
+            }
+            isMute = false;
+            updateVolume(currentVolume);
+            handler.removeMessages(HIDE_MEDIACONTROLLER);
+            handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
