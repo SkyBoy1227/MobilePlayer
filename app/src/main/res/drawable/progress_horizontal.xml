@@ -21,11 +21,11 @@
 
     <item
         android:id="@android:id/secondaryProgress"
-        android:drawable="@mipmap/progress_secondaryprogress" />
+        android:drawable="@drawable/progress_secondaryprogress" />
 
     <item
         android:id="@android:id/progress"
-        android:drawable="@mipmap/progress_normal" />
+        android:drawable="@drawable/progress_normal" />
 
 </layer-list>
 

@@ -9,7 +9,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
-        android:src="@mipmap/video_default_icon" />
+        android:src="@drawable/video_default_icon" />
 
     <LinearLayout
         android:layout_width="wrap_content"

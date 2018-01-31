@@ -29,7 +29,7 @@
                 android:id="@+id/iv_battery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_battery_10" />
+                android:src="@drawable/ic_battery_10" />
 
             <TextView
                 android:id="@+id/tv_system_time"
@@ -62,7 +62,7 @@
                 android:minHeight="6dp"
                 android:progress="20"
                 android:progressDrawable="@drawable/progress_horizontal"
-                android:thumb="@mipmap/progress_thumb" />
+                android:thumb="@drawable/progress_thumb" />
 
             <Button
                 android:id="@+id/btn_switch_player"
@@ -105,7 +105,7 @@
                 android:minHeight="6dp"
                 android:progress="20"
                 android:progressDrawable="@drawable/progress_horizontal"
-                android:thumb="@mipmap/progress_thumb" />
+                android:thumb="@drawable/progress_thumb" />
 
             <TextView
                 android:id="@+id/tv_duration"

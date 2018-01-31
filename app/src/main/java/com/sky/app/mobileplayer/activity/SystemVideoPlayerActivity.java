@@ -341,14 +341,14 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 if (position == 0) {
                     // 如果播放的是第一个视频，则把“上一个”按钮设置为灰色
                     btnVideoPre.setEnabled(false);
-                    btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+                    btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray);
                     // 把“下一个"按钮设置可点击
                     btnVideoNext.setEnabled(true);
                     btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
                 } else if (position == mediaItems.size() - 1) {
                     // 如果播放的是最后一个视频，则把“下一个”按钮设置为灰色
                     btnVideoNext.setEnabled(false);
-                    btnVideoNext.setBackgroundResource(R.mipmap.btn_next_gray);
+                    btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
                     // 把“上一个”按钮设置可点击
                     btnVideoPre.setEnabled(true);
                     btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
@@ -374,8 +374,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
             btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
         } else {
-            btnVideoNext.setBackgroundResource(R.mipmap.btn_next_gray);
-            btnVideoPre.setBackgroundResource(R.mipmap.btn_pre_gray);
+            btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
+            btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray);
         }
         btnVideoNext.setEnabled(isEnable);
         btnVideoPre.setEnabled(isEnable);
@@ -541,21 +541,21 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      */
     private void setBattery(int level) {
         if (level <= 0) {
-            ivBattery.setImageResource(R.mipmap.ic_battery_0);
+            ivBattery.setImageResource(R.drawable.ic_battery_0);
         } else if (level <= 10) {
-            ivBattery.setImageResource(R.mipmap.ic_battery_10);
+            ivBattery.setImageResource(R.drawable.ic_battery_10);
         } else if (level <= 20) {
-            ivBattery.setImageResource(R.mipmap.ic_battery_20);
+            ivBattery.setImageResource(R.drawable.ic_battery_20);
         } else if (level <= 40) {
-            ivBattery.setImageResource(R.mipmap.ic_battery_40);
+            ivBattery.setImageResource(R.drawable.ic_battery_40);
         } else if (level <= 60) {
-            ivBattery.setImageResource(R.mipmap.ic_battery_60);
+            ivBattery.setImageResource(R.drawable.ic_battery_60);
         } else if (level <= 80) {
-            ivBattery.setImageResource(R.mipmap.ic_battery_80);
+            ivBattery.setImageResource(R.drawable.ic_battery_80);
         } else if (level <= 100) {
-            ivBattery.setImageResource(R.mipmap.ic_battery_100);
+            ivBattery.setImageResource(R.drawable.ic_battery_100);
         } else {
-            ivBattery.setImageResource(R.mipmap.ic_battery_100);
+            ivBattery.setImageResource(R.drawable.ic_battery_100);
         }
     }
 

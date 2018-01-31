@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_topbanner_logo" />
+        android:src="@drawable/ic_topbanner_logo" />
 
     <TextView
         android:id="@+id/tv_search"
@@ -34,7 +34,7 @@
             android:id="@+id/tv_game"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@mipmap/ic_topbanner_game" />
+            android:drawableLeft="@drawable/ic_topbanner_game" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -48,5 +48,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:src="@mipmap/ic_topbanner_record" />
+        android:src="@drawable/ic_topbanner_record" />
 </com.sky.app.mobileplayer.view.TitleBar>
