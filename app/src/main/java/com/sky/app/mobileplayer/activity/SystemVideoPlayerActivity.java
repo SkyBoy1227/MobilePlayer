@@ -686,7 +686,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 float delta = distanceY / touchRang * maxVolume;
                 int voice = (int) Math.min(Math.max(mVol + delta, 0), maxVolume);
                 if (delta != 0) {
-                    isMute = false;
+                    if (voice == 0) {
+                        isMute = true;
+                    } else {
+                        isMute = false;
+                    }
                     updateVolume(voice);
                 }
                 break;
