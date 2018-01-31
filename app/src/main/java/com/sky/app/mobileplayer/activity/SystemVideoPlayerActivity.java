@@ -156,6 +156,21 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      */
     private boolean isMute = false;
 
+    /**
+     * 手指按下时的Y坐标
+     */
+    private float startY;
+
+    /**
+     * 屏幕的高，移动总距离
+     */
+    private float touchRang;
+
+    /**
+     * 刚按下时的音量值
+     */
+    private int mVol;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -653,6 +668,34 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         detector.onTouchEvent(event);
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // 手指按下
+                // 按下时记录初始值
+                startY = event.getY();
+                touchRang = Math.min(screenWidth, screenHeight);
+                mVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+                handler.removeMessages(HIDE_MEDIACONTROLLER);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                // 手指滑动
+                // 移动时记录相关值
+                float endY = event.getY();
+                float distanceY = startY - endY;
+                float delta = distanceY / touchRang * maxVolume;
+                int voice = (int) Math.min(Math.max(mVol + delta, 0), maxVolume);
+                if (delta != 0) {
+                    isMute = false;
+                    updateVolume(voice);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                // 手指离开
+                handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+                break;
+            default:
+                break;
+        }
         return super.onTouchEvent(event);
     }
 
