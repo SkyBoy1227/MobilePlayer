@@ -398,6 +398,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private void getData() {
         mediaItems = (ArrayList<MediaItem>) getIntent().getSerializableExtra("videolist");
         position = getIntent().getIntExtra("position", 0);
+        currentVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        maxVolume = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         // 得到播放地址
         uri = getIntent().getData();
     }
@@ -474,8 +476,6 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         screenWidth = displayMetrics.widthPixels;
         screenHeight = displayMetrics.heightPixels;
         am = (AudioManager) getSystemService(AUDIO_SERVICE);
-        currentVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        maxVolume = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
     }
 
     /**
@@ -627,11 +627,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    if (progress > 0) {
-                        isMute = false;
-                    } else {
-                        isMute = true;
-                    }
+                    isMute = progress <= 0;
                     updateVolume(progress);
                 }
             }
@@ -686,11 +682,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 float delta = distanceY / touchRang * maxVolume;
                 int voice = (int) Math.min(Math.max(mVol + delta, 0), maxVolume);
                 if (delta != 0) {
-                    if (voice == 0) {
-                        isMute = true;
-                    } else {
-                        isMute = false;
-                    }
+                    isMute = voice == 0;
                     updateVolume(voice);
                 }
                 break;
