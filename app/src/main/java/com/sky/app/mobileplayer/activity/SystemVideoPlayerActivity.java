@@ -172,6 +172,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      */
     private int mVol;
 
+    /**
+     * 是否是网络资源
+     */
+    private boolean isNetUri;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -186,6 +191,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     int currentPosition = videoView.getCurrentPosition();
                     // 2.SeekBar.setProgress(当前进度)
                     seekbarVideo.setProgress(currentPosition);
+                    // 得到缓冲进度
+                    if (isNetUri) {
+                        // 0~100
+                        int buffer = videoView.getBufferPercentage();
+                        int max = seekbarVideo.getMax();
+                        int secondaryProgress = buffer * max / 100;
+                        seekbarVideo.setSecondaryProgress(secondaryProgress);
+                    } else {
+                        seekbarVideo.setSecondaryProgress(0);
+                    }
                     // 设置当前进度文本
                     tvCurrentTime.setText(utils.stringForTime(currentPosition));
                     // 设置系统时间
@@ -305,6 +320,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             if (position >= 0) {
                 MediaItem item = mediaItems.get(position);
                 tvName.setText(item.getName());
+                isNetUri = utils.isNetUri(item.getData());
                 videoView.setVideoPath(item.getData());
                 setButtonState();
             }
@@ -320,6 +336,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             if (position < mediaItems.size()) {
                 MediaItem item = mediaItems.get(position);
                 tvName.setText(item.getName());
+                isNetUri = utils.isNetUri(item.getData());
                 videoView.setVideoPath(item.getData());
                 setButtonState();
             }
@@ -409,10 +426,12 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             MediaItem mediaItem = mediaItems.get(position);
             // 设置视频名称
             tvName.setText(mediaItem.getName());
+            isNetUri = utils.isNetUri(mediaItem.getData());
             videoView.setVideoPath(mediaItem.getData());
         } else if (uri != null) {
             // 设置视频名称
             tvName.setText(uri.toString());
+            isNetUri = utils.isNetUri(uri.toString());
             videoView.setVideoURI(uri);
         } else {
             Toast.makeText(this, "对不起，你没有传入视频信息", Toast.LENGTH_SHORT).show();
