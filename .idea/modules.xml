@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MobilePlayer.iml" filepath="$PROJECT_DIR$/MobilePlayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StartAllPlayer/StartAllPlayer.iml" filepath="$PROJECT_DIR$/StartAllPlayer/StartAllPlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
