@@ -14,4 +14,8 @@
     <include
         android:id="@+id/media_controller"
         layout="@layout/media_controller" />
+
+    <include
+        android:id="@+id/ll_buffer"
+        layout="@layout/ll_buffer" />
 </RelativeLayout>

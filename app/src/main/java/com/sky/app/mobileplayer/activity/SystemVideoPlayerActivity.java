@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -68,14 +70,12 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
     private VideoView videoView;
     private Uri uri;
-    private LinearLayout llTop;
     private TextView tvName;
     private ImageView ivBattery;
     private TextView tvSystemTime;
     private Button btnVoice;
     private SeekBar seekbarAudio;
     private Button btnSwitchPlayer;
-    private LinearLayout llBottom;
     private TextView tvCurrentTime;
     private SeekBar seekbarVideo;
     private TextView tvDuration;
@@ -85,6 +85,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoNext;
     private Button btnSwitchScreen;
     private RelativeLayout media_controller;
+    private LinearLayout llBuffer;
+    private TextView tvNetspeed;
     private Utils utils;
 
     /**
@@ -232,14 +234,12 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * (http://www.buzzingandroid.com/tools/android-layout-finder)
      */
     private void findViews() {
-        llTop = findViewById(R.id.ll_top);
         tvName = findViewById(R.id.tv_name);
         ivBattery = findViewById(R.id.iv_battery);
         tvSystemTime = findViewById(R.id.tv_system_time);
         btnVoice = findViewById(R.id.btn_voice);
         seekbarAudio = findViewById(R.id.seekbar_audio);
         btnSwitchPlayer = findViewById(R.id.btn_switch_player);
-        llBottom = findViewById(R.id.ll_bottom);
         tvCurrentTime = findViewById(R.id.tv_current_time);
         seekbarVideo = findViewById(R.id.seekbar_video);
         tvDuration = findViewById(R.id.tv_duration);
@@ -250,6 +250,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         btnSwitchScreen = findViewById(R.id.btn_switch_screen);
         videoView = findViewById(R.id.videoview);
         media_controller = findViewById(R.id.media_controller);
+        llBuffer = findViewById(R.id.ll_buffer);
+        tvNetspeed = findViewById(R.id.tv_netspeed);
 
         btnVoice.setOnClickListener(this);
         btnSwitchPlayer.setOnClickListener(this);
@@ -661,6 +663,25 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
             }
         });
+
+        // 设置视频卡顿的监听
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            videoView.setOnInfoListener((mp, what, extra) -> {
+                switch (what) {
+                    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                        // 视频开始卡顿
+                        llBuffer.setVisibility(View.VISIBLE);
+                        break;
+                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                        // 视频卡顿结束
+                        llBuffer.setVisibility(View.GONE);
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            });
+        }
     }
 
     /**

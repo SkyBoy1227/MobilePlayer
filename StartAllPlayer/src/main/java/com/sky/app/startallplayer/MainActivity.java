@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startPlayer(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse("http://192.168.56.1:8080/my_heart.mp4"), "video/*");
+        intent.setDataAndType(Uri.parse("http://192.168.56.1:8080/Video.mp4"), "video/*");
         startActivity(intent);
     }
 }
