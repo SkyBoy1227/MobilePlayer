@@ -179,6 +179,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      */
     private boolean isNetUri;
 
+    /**
+     * 是否调用系统接口
+     */
+    private boolean isUseSystem;
+
+    /**
+     * 上一次播放的进度
+     */
+    private int prePosition;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -203,6 +213,21 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     } else {
                         seekbarVideo.setSecondaryProgress(0);
                     }
+
+                    // 监听卡顿
+                    if (!isUseSystem && videoView.isPlaying()) {
+                        int buffer = currentPosition - prePosition;
+                        if (buffer < 500) {
+                            // 视频卡顿
+                            llBuffer.setVisibility(View.VISIBLE);
+                        } else {
+                            // 视频不卡顿
+                            llBuffer.setVisibility(View.GONE);
+                        }
+                    } else {
+                        llBuffer.setVisibility(View.GONE);
+                    }
+                    prePosition = currentPosition;
                     // 设置当前进度文本
                     tvCurrentTime.setText(utils.stringForTime(currentPosition));
                     // 设置系统时间
@@ -664,23 +689,25 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             }
         });
 
-        // 设置视频卡顿的监听
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            videoView.setOnInfoListener((mp, what, extra) -> {
-                switch (what) {
-                    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-                        // 视频开始卡顿
-                        llBuffer.setVisibility(View.VISIBLE);
-                        break;
-                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-                        // 视频卡顿结束
-                        llBuffer.setVisibility(View.GONE);
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            });
+        if (isUseSystem) {
+            // 设置视频卡顿的监听
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                videoView.setOnInfoListener((mp, what, extra) -> {
+                    switch (what) {
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                            // 视频开始卡顿
+                            llBuffer.setVisibility(View.VISIBLE);
+                            break;
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                            // 视频卡顿结束
+                            llBuffer.setVisibility(View.GONE);
+                            break;
+                        default:
+                            break;
+                    }
+                    return true;
+                });
+            }
         }
     }
 
