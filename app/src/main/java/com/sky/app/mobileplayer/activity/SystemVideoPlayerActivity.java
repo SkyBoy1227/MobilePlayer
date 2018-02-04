@@ -552,7 +552,6 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 startActivityForResult(intent, 0);
             }
         }
-        screenBrightness = getScreenBrightness();
     }
 
     /**
@@ -771,6 +770,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 isLeft = event.getX() <= screenWidth / 2;
                 touchRang = Math.min(screenWidth, screenHeight);
                 mVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+                screenBrightness = getScreenBrightness();
                 handler.removeMessages(HIDE_MEDIACONTROLLER);
                 break;
             case MotionEvent.ACTION_MOVE:
