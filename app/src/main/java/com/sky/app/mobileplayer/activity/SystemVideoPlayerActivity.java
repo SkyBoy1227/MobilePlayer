@@ -3,6 +3,7 @@ package com.sky.app.mobileplayer.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,12 +14,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -188,6 +191,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 上一次播放的进度
      */
     private int prePosition;
+
+    /**
+     * 滑动的是否为屏幕左半部
+     */
+    private boolean isLeft;
+
+    /**
+     * 当前屏幕的亮度
+     */
+    private int screenBrightness;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -522,6 +535,24 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         screenWidth = displayMetrics.widthPixels;
         screenHeight = displayMetrics.heightPixels;
         am = (AudioManager) getSystemService(AUDIO_SERVICE);
+        requestPermission();
+    }
+
+
+    /**
+     * 申请动态权限
+     */
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.System.canWrite(this)) {
+                // 如果没有修改系统的权限则请求修改系统的权限
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityForResult(intent, 0);
+            }
+        }
+        screenBrightness = getScreenBrightness();
     }
 
     /**
@@ -737,6 +768,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 // 手指按下
                 // 按下时记录初始值
                 startY = event.getY();
+                isLeft = event.getX() <= screenWidth / 2;
                 touchRang = Math.min(screenWidth, screenHeight);
                 mVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
                 handler.removeMessages(HIDE_MEDIACONTROLLER);
@@ -745,12 +777,20 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 // 手指滑动
                 // 移动时记录相关值
                 float endY = event.getY();
-                float distanceY = startY - endY;
-                float delta = distanceY / touchRang * maxVolume;
-                int voice = (int) Math.min(Math.max(mVol + delta, 0), maxVolume);
-                if (delta != 0) {
-                    isMute = voice == 0;
-                    updateVolume(voice);
+                float distance = startY - endY;
+                float deltaVoice = distance / touchRang * maxVolume;
+                float deltaBrightness = distance / touchRang * 255;
+                if (isLeft) {
+                    if (deltaBrightness != 0) {
+                        int brightness = (int) Math.min(Math.max(screenBrightness + deltaBrightness, 0), 255);
+                        setScreenBrightness(brightness);
+                    }
+                } else {
+                    if (deltaVoice != 0) {
+                        int voice = (int) Math.min(Math.max(mVol + deltaVoice, 0), maxVolume);
+                        isMute = voice == 0;
+                        updateVolume(voice);
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -761,6 +801,46 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+
+    /**
+     * 获得当前屏幕亮度值  0--255
+     */
+    private int getScreenBrightness() {
+        int screenBrightness = 255;
+        try {
+            screenBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return screenBrightness;
+    }
+
+    /**
+     * 设置屏幕的亮度
+     */
+    private void setScreenBrightness(int process) {
+
+        //设置当前窗口的亮度值.这种方法需要权限android.permission.WRITE_EXTERNAL_STORAGE
+        WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+        float f = process / 255.0F;
+        localLayoutParams.screenBrightness = f;
+        getWindow().setAttributes(localLayoutParams);
+        //修改系统的亮度值,以至于退出应用程序亮度保持
+        saveBrightness(getContentResolver(), process);
+    }
+
+    public static void saveBrightness(ContentResolver resolver, int brightness) {
+        //改变系统的亮度值
+        //这里需要权限android.permission.WRITE_SETTINGS
+        //设置为手动调节模式
+        Settings.System.putInt(resolver, Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+        //保存到系统中
+        Uri uri = android.provider.Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS);
+        android.provider.Settings.System.putInt(resolver, Settings.System.SCREEN_BRIGHTNESS, brightness);
+        resolver.notifyChange(uri, null);
     }
 
     /**
