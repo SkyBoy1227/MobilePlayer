@@ -341,6 +341,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
             updateVolume(currentVolume);
         } else if (v == btnSwitchPlayer) {
             // Handle clicks for btnSwitchPlayer
+            showSwitchPlayerDialog();
         } else if (v == btnExit) {
             // Handle clicks for btnExit
             finish();
@@ -359,6 +360,39 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
         }
         handler.removeMessages(HIDE_MEDIACONTROLLER);
         handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+    }
+
+    /**
+     * 显示切换播放器的对话框
+     */
+    private void showSwitchPlayerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("万能放器提醒您")
+                .setMessage("当您播放一个视频，有花屏的时候，可以尝试使用系统播放器播放")
+                .setPositiveButton("确定", (dialog, which) -> startSystemVideoPlayer())
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    /**
+     * 调用系统播放器
+     */
+    private void startSystemVideoPlayer() {
+        if (videoView != null) {
+            videoView.stopPlayback();
+        }
+        Intent intent = new Intent(this, SystemVideoPlayerActivity.class);
+        if (mediaItems != null && mediaItems.size() > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", mediaItems);
+            intent.putExtras(bundle);
+            intent.putExtra("position", position);
+        } else if (uri != null) {
+            intent.setData(uri);
+        }
+        startActivity(intent);
+        // 关闭当前页面
+        finish();
     }
 
     /**

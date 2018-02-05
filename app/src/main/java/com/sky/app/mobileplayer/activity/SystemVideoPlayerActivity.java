@@ -2,6 +2,7 @@ package com.sky.app.mobileplayer.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -337,6 +338,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             updateVolume(currentVolume);
         } else if (v == btnSwitchPlayer) {
             // Handle clicks for btnSwitchPlayer
+            showSwitchPlayerDialog();
         } else if (v == btnExit) {
             // Handle clicks for btnExit
             finish();
@@ -355,6 +357,18 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         }
         handler.removeMessages(HIDE_MEDIACONTROLLER);
         handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+    }
+
+    /**
+     * 显示切换播放器的对话框
+     */
+    private void showSwitchPlayerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("系统播放器提醒您")
+                .setMessage("当您播放视频，有声音没有画面的时候，请切换万能播放器播放")
+                .setPositiveButton("确定", (dialog, which) -> startVitamioPlayer())
+                .setNegativeButton("取消", null)
+                .show();
     }
 
     /**
