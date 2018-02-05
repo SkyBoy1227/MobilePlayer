@@ -2,6 +2,7 @@ package com.sky.app.mobileplayer.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -687,7 +688,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
         // 监听播放出错
         videoView.setOnErrorListener((mp, what, extra) -> {
-            Toast.makeText(this, "播放出错了", Toast.LENGTH_SHORT).show();
+            showErrorDialog();
             return true;
         });
 
@@ -770,6 +771,17 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
                 });
             }
         }
+    }
+
+    /**
+     * 提示错误对话框
+     */
+    private void showErrorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示")
+                .setMessage("抱歉，该视频无法播放！！")
+                .setPositiveButton("确定", (dialog, which) -> finish())
+                .show();
     }
 
     /**
