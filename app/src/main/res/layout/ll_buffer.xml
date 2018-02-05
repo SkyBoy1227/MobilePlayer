@@ -13,7 +13,7 @@
         android:layout_height="30dp" />
 
     <TextView
-        android:id="@+id/tv_netspeed"
+        android:id="@+id/tv_buffer_netspeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"

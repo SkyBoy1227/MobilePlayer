@@ -62,6 +62,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private static final int HIDE_MEDIACONTROLLER = 2;
 
     /**
+     * 显示网速
+     */
+    private static final int SHOW_SPEED = 3;
+
+    /**
      * 默认播放
      */
     private static final int DEFAULT_SCREEN = 1;
@@ -89,7 +94,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnSwitchScreen;
     private RelativeLayout media_controller;
     private LinearLayout llBuffer;
-    private TextView tvNetspeed;
+    private TextView tvBufferNetspeed;
     private LinearLayout llLoading;
     private TextView tvLoadingNetspeed;
 
@@ -211,6 +216,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case SHOW_SPEED:
+                    // 得到当前网速
+                    String netSpeed = utils.showNetSpeed(SystemVideoPlayerActivity.this);
+                    // 显示网速
+                    tvLoadingNetspeed.setText("玩命加载中..." + netSpeed);
+                    tvBufferNetspeed.setText("缓冲中..." + netSpeed);
+                    // 每两秒更新一次
+                    handler.removeMessages(SHOW_SPEED);
+                    handler.sendEmptyMessageDelayed(SHOW_SPEED, 2000);
+                    break;
                 case HIDE_MEDIACONTROLLER:
                     hideMediaController();
                     break;
@@ -231,17 +246,19 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     }
 
                     // 监听卡顿
-                    if (!isUseSystem && videoView.isPlaying()) {
-                        int buffer = currentPosition - prePosition;
-                        if (buffer < 500) {
-                            // 视频卡顿
-                            llBuffer.setVisibility(View.VISIBLE);
+                    if (!isUseSystem) {
+                        if (videoView.isPlaying()) {
+                            int buffer = currentPosition - prePosition;
+                            if (buffer < 500) {
+                                // 视频卡顿
+                                llBuffer.setVisibility(View.VISIBLE);
+                            } else {
+                                // 视频不卡顿
+                                llBuffer.setVisibility(View.GONE);
+                            }
                         } else {
-                            // 视频不卡顿
                             llBuffer.setVisibility(View.GONE);
                         }
-                    } else {
-                        llBuffer.setVisibility(View.GONE);
                     }
                     prePosition = currentPosition;
                     // 设置当前进度文本
@@ -292,7 +309,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         videoView = findViewById(R.id.videoview);
         media_controller = findViewById(R.id.media_controller);
         llBuffer = findViewById(R.id.ll_buffer);
-        tvNetspeed = findViewById(R.id.tv_netspeed);
+        tvBufferNetspeed = findViewById(R.id.tv_buffer_netspeed);
         llLoading = findViewById(R.id.ll_loading);
         tvLoadingNetspeed = findViewById(R.id.tv_loading_netspeed);
 
@@ -488,6 +505,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         hideMediaController();
         seekbarAudio.setMax(maxVolume);
         seekbarAudio.setProgress(currentVolume);
+        handler.sendEmptyMessage(SHOW_SPEED);
     }
 
     /**
