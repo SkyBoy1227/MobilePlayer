@@ -18,4 +18,8 @@
     <include
         android:id="@+id/ll_buffer"
         layout="@layout/ll_buffer" />
+
+    <include
+        android:id="@+id/ll_loading"
+        layout="@layout/ll_loading" />
 </RelativeLayout>

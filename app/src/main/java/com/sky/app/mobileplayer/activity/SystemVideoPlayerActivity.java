@@ -90,6 +90,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private RelativeLayout media_controller;
     private LinearLayout llBuffer;
     private TextView tvNetspeed;
+    private LinearLayout llLoading;
+    private TextView tvLoadingNetspeed;
+
     private Utils utils;
 
     /**
@@ -290,6 +293,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         media_controller = findViewById(R.id.media_controller);
         llBuffer = findViewById(R.id.ll_buffer);
         tvNetspeed = findViewById(R.id.tv_netspeed);
+        llLoading = findViewById(R.id.ll_loading);
+        tvLoadingNetspeed = findViewById(R.id.tv_loading_netspeed);
 
         btnVoice.setOnClickListener(this);
         btnSwitchPlayer.setOnClickListener(this);
@@ -363,6 +368,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 isNetUri = utils.isNetUri(item.getData());
                 videoView.setVideoPath(item.getData());
                 setButtonState();
+                llLoading.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -379,6 +385,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 isNetUri = utils.isNetUri(item.getData());
                 videoView.setVideoPath(item.getData());
                 setButtonState();
+                llLoading.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -651,7 +658,10 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             videoView.start();
             videoWidth = mp.getVideoWidth();
             videoHeight = mp.getVideoHeight();
+            // 视频默认大小
             setVideoType(DEFAULT_SCREEN);
+            // 隐藏加载页面
+            llLoading.setVisibility(View.GONE);
         });
 
         // 监听播放出错
