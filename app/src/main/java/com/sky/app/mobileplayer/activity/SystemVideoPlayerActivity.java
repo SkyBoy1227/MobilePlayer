@@ -292,6 +292,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * (http://www.buzzingandroid.com/tools/android-layout-finder)
      */
     private void findViews() {
+        setContentView(R.layout.activity_system_video_player);
         tvName = findViewById(R.id.tv_name);
         ivBattery = findViewById(R.id.iv_battery);
         tvSystemTime = findViewById(R.id.tv_system_time);
@@ -466,7 +467,6 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtil.e("onCreate");
-        setContentView(R.layout.activity_system_video_player);
         initData();
         findViews();
         setListener();
@@ -684,14 +684,15 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
         // 监听播放出错
         videoView.setOnErrorListener((mp, what, extra) -> {
-            Toast.makeText(this, "播放出错了", Toast.LENGTH_SHORT).show();
-            return false;
+            // 1.播放的视频格式不支持--跳转到万能播放器继续播放
+            // 2.播放网络视频的时候，网络中断--1.如果网络确实断了，可以提示用户网络断了；2.网络断断续续的，重新播放
+            // 3.播放的时候本地文件中间有空白
+            startVitamioPlayer();
+            return true;
         });
 
         // 监听播放完成
-        videoView.setOnCompletionListener(mp -> {
-            playNextVideo();
-        });
+        videoView.setOnCompletionListener(mp -> playNextVideo());
 
         // 设置SeekBar状态变化的监听
         seekbarVideo.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -767,6 +768,27 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 });
             }
         }
+    }
+
+    /**
+     * 调用万能播放器
+     */
+    private void startVitamioPlayer() {
+        if (videoView != null) {
+            videoView.stopPlayback();
+        }
+        Intent intent = new Intent(this, VitamioVideoPlayerActivity.class);
+        if (mediaItems != null && mediaItems.size() > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", mediaItems);
+            intent.putExtras(bundle);
+            intent.putExtra("position", position);
+        } else if (uri != null) {
+            intent.setData(uri);
+        }
+        startActivity(intent);
+        // 关闭当前页面
+        finish();
     }
 
     /**
