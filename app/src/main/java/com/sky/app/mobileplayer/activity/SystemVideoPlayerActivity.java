@@ -978,6 +978,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
+        // 移除消息
+        handler.removeCallbacksAndMessages(null);
         // 释放资源的时候，先释放子类，再释放父类
         if (receiver != null) {
             unregisterReceiver(receiver);
