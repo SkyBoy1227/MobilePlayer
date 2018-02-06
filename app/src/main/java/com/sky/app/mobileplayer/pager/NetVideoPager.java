@@ -1,13 +1,20 @@
 package com.sky.app.mobileplayer.pager;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.Gravity;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.base.BasePager;
+import com.sky.app.mobileplayer.utils.Constants;
 import com.sky.app.mobileplayer.utils.LogUtil;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.ViewInject;
+import org.xutils.x;
 
 /**
  * Created with Android Studio.
@@ -19,7 +26,12 @@ import com.sky.app.mobileplayer.utils.LogUtil;
  * @version ${VERSION}
  */
 public class NetVideoPager extends BasePager {
-    private TextView textView;
+    @ViewInject(R.id.listView)
+    private ListView listView;
+    @ViewInject(R.id.tv_nonet)
+    private TextView tvNonet;
+    @ViewInject(R.id.pb_loading)
+    private ProgressBar pbLoading;
 
     public NetVideoPager(Context context) {
         super(context);
@@ -32,11 +44,9 @@ public class NetVideoPager extends BasePager {
      */
     @Override
     public View initView() {
-        textView = new TextView(context);
-        textView.setTextSize(30);
-        textView.setTextColor(Color.RED);
-        textView.setGravity(Gravity.CENTER);
-        return textView;
+        View view = View.inflate(context, R.layout.netvideo_pager, null);
+        x.view().inject(NetVideoPager.this, view);
+        return view;
     }
 
 
@@ -46,6 +56,27 @@ public class NetVideoPager extends BasePager {
         LogUtil.e("网络视频页面的数据被初始化了。。。");
         //联网
         //音频内容
-        textView.setText("网络视频的内容");
+        RequestParams params = new RequestParams(Constants.NET_URL);
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                LogUtil.e("result = " + result);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                LogUtil.e("onError..." + ex.getMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                LogUtil.e("onCancelled..." + cex.getMessage());
+            }
+
+            @Override
+            public void onFinished() {
+                LogUtil.e("onFinished...");
+            }
+        });
     }
 }

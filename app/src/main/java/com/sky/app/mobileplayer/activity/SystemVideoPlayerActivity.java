@@ -401,6 +401,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 videoView.setVideoPath(item.getData());
                 setButtonState();
                 llLoading.setVisibility(View.VISIBLE);
+            } else {
+                // 重置position，防止数组越界异常
+                position++;
             }
         }
     }
@@ -418,6 +421,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 videoView.setVideoPath(item.getData());
                 setButtonState();
                 llLoading.setVisibility(View.VISIBLE);
+            } else {
+                // 重置position，防止数组越界异常
+                position--;
             }
         }
     }
