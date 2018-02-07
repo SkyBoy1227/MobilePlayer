@@ -3,6 +3,7 @@ package com.sky.app.mobileplayer.pager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import com.sky.app.mobileplayer.activity.SystemVideoPlayerActivity;
 import com.sky.app.mobileplayer.adapter.NetVideoPagerAdapter;
 import com.sky.app.mobileplayer.base.BasePager;
 import com.sky.app.mobileplayer.domain.MediaItem;
+import com.sky.app.mobileplayer.utils.CacheUtils;
 import com.sky.app.mobileplayer.utils.Constants;
 import com.sky.app.mobileplayer.utils.LogUtil;
 import com.sky.app.mobileplayer.view.XListView;
@@ -145,8 +147,11 @@ public class NetVideoPager extends BasePager {
     public void initData() {
         super.initData();
         LogUtil.e("网络视频页面的数据被初始化了。。。");
+        String data = CacheUtils.getString(context, Constants.NET_URL);
+        if (!TextUtils.isEmpty(data)) {
+            processData(data);
+        }
         getDataFromNet();
-
     }
 
     /**
@@ -160,12 +165,15 @@ public class NetVideoPager extends BasePager {
             @Override
             public void onSuccess(String result) {
                 LogUtil.e("result = " + result);
+                // 缓存数据
+                CacheUtils.putString(context, Constants.NET_URL, result);
                 processData(result);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 LogUtil.e("onError..." + ex.getMessage());
+                showData();
             }
 
             @Override
@@ -188,19 +196,7 @@ public class NetVideoPager extends BasePager {
     private void processData(String json) {
         if (!isLoadMore) {
             mediaItems = parseJson(json);
-
-            if (mediaItems != null && mediaItems.size() > 0) {
-                //隐藏文本，显示列表
-                adapter = new NetVideoPagerAdapter(context, mediaItems);
-                listView.setAdapter(adapter);
-                onLoad();
-                tvNonet.setVisibility(View.GONE);
-            } else {
-                //显示文本
-                tvNonet.setVisibility(View.VISIBLE);
-            }
-            //隐藏ProgressBar
-            pbLoading.setVisibility(View.GONE);
+            showData();
         } else {
             mediaItems.addAll(parseJson(json));
             // 刷新
@@ -208,6 +204,21 @@ public class NetVideoPager extends BasePager {
             onLoad();
             isLoadMore = false;
         }
+    }
+
+    private void showData() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            //隐藏文本，显示列表
+            adapter = new NetVideoPagerAdapter(context, mediaItems);
+            listView.setAdapter(adapter);
+            onLoad();
+            tvNonet.setVisibility(View.GONE);
+        } else {
+            //显示文本
+            tvNonet.setVisibility(View.VISIBLE);
+        }
+        //隐藏ProgressBar
+        pbLoading.setVisibility(View.GONE);
     }
 
     /**
