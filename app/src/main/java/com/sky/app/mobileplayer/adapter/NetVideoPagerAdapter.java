@@ -7,10 +7,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.domain.MediaItem;
-
-import org.xutils.x;
 
 import java.util.ArrayList;
 
@@ -61,7 +62,23 @@ public class NetVideoPagerAdapter extends BaseAdapter {
         MediaItem mediaItem = mediaItems.get(position);
         holder.tv_name.setText(mediaItem.getName());
         holder.tv_desc.setText(mediaItem.getDesc());
-        x.image().bind(holder.iv_icon, mediaItem.getImageUrl());
+        // 1.使用xUtils3加载网络图片
+//        x.image().bind(holder.iv_icon, mediaItem.getImageUrl());
+        // 2.使用Glide加载网络图片
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.video_default)
+                .error(R.drawable.video_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(context)
+                .load(mediaItem.getImageUrl())
+                .apply(options)
+                .into(holder.iv_icon);
+        // 3.使用Picasso加载网络图片
+//        Picasso.with(context)
+//                .load(mediaItem.getImageUrl())
+//                .placeholder(R.drawable.video_default)
+//                .error(R.drawable.video_default)
+//                .into(holder.iv_icon);
         return convertView;
     }
 
