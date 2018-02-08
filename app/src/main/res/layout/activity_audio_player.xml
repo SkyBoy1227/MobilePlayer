@@ -16,6 +16,7 @@
             android:background="@drawable/animation_list" />
 
         <TextView
+            android:id="@+id/tv_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/iv_icon"
@@ -26,6 +27,7 @@
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/iv_icon"
@@ -34,4 +36,73 @@
             android:textColor="#ffffff"
             android:textSize="18sp" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:padding="6dp">
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="00:00/00:30"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/seekbar_audio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="5dp"
+            android:minHeight="5dp"
+            android:progressDrawable="@drawable/audio_progress_horizontal"
+            android:thumb="@drawable/seek_thumb" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_audio_play_mode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_audio_play_mode_normal_selector" />
+
+
+            <Button
+                android:id="@+id/btn_audio_pre"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_audio_pre_selector" />
+
+            <Button
+                android:id="@+id/btn_audio_start_pause"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_audio_pause_selector" />
+
+            <Button
+                android:id="@+id/btn_audio_next"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_audio_next_selector" />
+
+            <Button
+                android:id="@+id/btn_lyrics"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_lyrics_selector" />
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
