@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -16,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sky.app.mobileplayer.R;
-import com.sky.app.mobileplayer.activity.SystemVideoPlayerActivity;
+import com.sky.app.mobileplayer.activity.AudioPlayerActivity;
 import com.sky.app.mobileplayer.adapter.AudioPagerAdapter;
 import com.sky.app.mobileplayer.base.BasePager;
 import com.sky.app.mobileplayer.domain.MediaItem;
@@ -85,24 +84,8 @@ public class AudioPager extends BasePager {
         tv_nomedia = view.findViewById(R.id.tv_nomedia);
         pb_loading = view.findViewById(R.id.pb_loading);
         listView.setOnItemClickListener((parent, view1, position, id) -> {
-//            MediaItem mediaItem = mediaItems.get(position);
-//            Toast.makeText(context, "mediaItem = " + mediaItem.toString(), Toast.LENGTH_SHORT).show();
-
-            // 1.调起系统所有的播放器--隐式意图
-//            Intent intent = new Intent();
-//            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
-//            context.startActivity(intent);
-
-            // 2.调用自己写的播放器--显示意图
-//            Intent intent = new Intent(context, SystemVideoPlayerActivity.class);
-//            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
-//            context.startActivity(intent);
-
             // 3.传递列表数据-对象-序列化
-            Intent intent = new Intent(context, SystemVideoPlayerActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("videolist", mediaItems);
-            intent.putExtras(bundle);
+            Intent intent = new Intent(context, AudioPlayerActivity.class);
             intent.putExtra("position", position);
             context.startActivity(intent);
         });

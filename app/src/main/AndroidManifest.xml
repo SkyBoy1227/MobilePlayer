@@ -78,6 +78,7 @@
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:screenOrientation="landscape"
             android:theme="@style/noAnimation_Theme" />
+        <activity android:name=".activity.AudioPlayerActivity" />
     </application>
 
 </manifest>
