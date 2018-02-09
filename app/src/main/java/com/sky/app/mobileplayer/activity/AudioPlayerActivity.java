@@ -10,7 +10,11 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.sky.app.mobileplayer.IMusicPlayerService;
 import com.sky.app.mobileplayer.R;
@@ -25,8 +29,18 @@ import com.sky.app.mobileplayer.service.MusicPlayerService;
  * @author 晏琦云
  * @version ${VERSION}
  */
-public class AudioPlayerActivity extends AppCompatActivity {
-    private ImageView iv_icon;
+public class AudioPlayerActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private ImageView ivIcon;
+    private TextView tvArtist;
+    private TextView tvName;
+    private TextView tvTime;
+    private SeekBar seekbarAudio;
+    private Button btnAudioPlayMode;
+    private Button btnAudioPre;
+    private Button btnAudioStartPause;
+    private Button btnAudioNext;
+    private Button btnLyrics;
 
     /**
      * 音频列表的具体位置
@@ -72,11 +86,76 @@ public class AudioPlayerActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Find the Views in the layout<br />
+     * <br />
+     * Auto-created on 2018-02-09 17:57:34 by Android Layout Finder
+     * (http://www.buzzingandroid.com/tools/android-layout-finder)
+     */
+    private void findViews() {
+        setContentView(R.layout.activity_audio_player);
+        ivIcon = findViewById(R.id.iv_icon);
+        AnimationDrawable drawable = (AnimationDrawable) ivIcon.getBackground();
+        drawable.start();
+        tvArtist = findViewById(R.id.tv_artist);
+        tvName = findViewById(R.id.tv_name);
+        tvTime = findViewById(R.id.tv_time);
+        seekbarAudio = findViewById(R.id.seekbar_audio);
+        btnAudioPlayMode = findViewById(R.id.btn_audio_play_mode);
+        btnAudioPre = findViewById(R.id.btn_audio_pre);
+        btnAudioStartPause = findViewById(R.id.btn_audio_start_pause);
+        btnAudioNext = findViewById(R.id.btn_audio_next);
+        btnLyrics = findViewById(R.id.btn_lyrics);
+
+        btnAudioPlayMode.setOnClickListener(this);
+        btnAudioPre.setOnClickListener(this);
+        btnAudioStartPause.setOnClickListener(this);
+        btnAudioNext.setOnClickListener(this);
+        btnLyrics.setOnClickListener(this);
+    }
+
+    /**
+     * Handle button click events<br />
+     * <br />
+     * Auto-created on 2018-02-09 17:57:34 by Android Layout Finder
+     * (http://www.buzzingandroid.com/tools/android-layout-finder)
+     */
+    @Override
+    public void onClick(View v) {
+        if (v == btnAudioPlayMode) {
+            // Handle clicks for btnAudioPlayMode
+        } else if (v == btnAudioPre) {
+            // Handle clicks for btnAudioPre
+        } else if (v == btnAudioStartPause) {
+            // Handle clicks for btnAudioStartPause
+            if (service != null) {
+                try {
+                    if (service.isPlaying()) {
+                        // 暂停
+                        service.pause();
+                        // 按钮状态：播放
+                        btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_start_selector);
+                    } else {
+                        // 暂停
+                        service.start();
+                        // 按钮状态：播放
+                        btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_pause_selector);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (v == btnAudioNext) {
+            // Handle clicks for btnAudioNext
+        } else if (v == btnLyrics) {
+            // Handle clicks for btnLyrics
+        }
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_audio_player);
-        initView();
+        findViews();
         getData();
         bindAndStartService();
     }
@@ -91,11 +170,5 @@ public class AudioPlayerActivity extends AppCompatActivity {
 
     private void getData() {
         position = getIntent().getIntExtra("position", 0);
-    }
-
-    private void initView() {
-        iv_icon = findViewById(R.id.iv_icon);
-        AnimationDrawable drawable = (AnimationDrawable) iv_icon.getBackground();
-        drawable.start();
     }
 }

@@ -21,13 +21,10 @@ interface IMusicPlayerService {
      */
     void pause();
 
-
-
     /**
      * 停止播放
      */
     void stop();
-
 
     /**
      * 得到当前的播放进度
@@ -87,4 +84,11 @@ interface IMusicPlayerService {
      * @return
      */
     int getPlayMode();
+
+    /**
+     * 是否在播放音频
+     *
+     * @return
+     */
+    boolean isPlaying();
 }

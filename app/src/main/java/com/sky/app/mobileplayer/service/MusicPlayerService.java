@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.sky.app.mobileplayer.IMusicPlayerService;
 import com.sky.app.mobileplayer.domain.MediaItem;
@@ -114,6 +115,11 @@ public class MusicPlayerService extends Service {
         public int getPlayMode() throws RemoteException {
             return service.getPlayMode();
         }
+
+        @Override
+        public boolean isPlaying() throws RemoteException {
+            return service.isPlaying();
+        }
     };
 
     @Override
@@ -188,8 +194,8 @@ public class MusicPlayerService extends Service {
         if (mediaItems != null && mediaItems.size() > 0) {
             mediaItem = mediaItems.get(position);
             if (mediaPlayer != null) {
-                mediaPlayer.release();
                 mediaPlayer.reset();
+                mediaPlayer.release();
             }
             try {
                 mediaPlayer = new MediaPlayer();
@@ -209,6 +215,8 @@ public class MusicPlayerService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            Toast.makeText(service, "对不起，还没有数据", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -308,5 +316,14 @@ public class MusicPlayerService extends Service {
      */
     private int getPlayMode() {
         return 0;
+    }
+
+    /**
+     * 是否在播放音频
+     *
+     * @return
+     */
+    private boolean isPlaying() {
+        return mediaPlayer.isPlaying();
     }
 }
