@@ -128,15 +128,15 @@ public class VideoPager extends BasePager {
             ContentResolver contentResolver = context.getContentResolver();
             Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
             String[] projection = {
-                    //视频的名称
+                    // 视频的名称
                     MediaStore.Video.Media.DISPLAY_NAME,
-                    //视频的时长
+                    // 视频的时长
                     MediaStore.Video.Media.DURATION,
-                    //视频的文件大小
+                    // 视频的文件大小
                     MediaStore.Video.Media.SIZE,
-                    //视频的播放地址
+                    // 视频的播放地址
                     MediaStore.Video.Media.DATA,
-                    //音频的演唱者
+                    // 音频的演唱者
                     MediaStore.Video.Media.ARTIST,
             };
             Cursor cursor = contentResolver.query(uri, projection, null, null, null);

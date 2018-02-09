@@ -110,13 +110,13 @@ public class AudioPager extends BasePager {
             ContentResolver contentResolver = context.getContentResolver();
             Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             String[] projection = {
-                    //视频的名称
+                    // 音频的名称
                     MediaStore.Audio.Media.DISPLAY_NAME,
-                    //视频的时长
+                    // 音频的时长
                     MediaStore.Audio.Media.DURATION,
-                    //视频的文件大小
+                    // 音频的文件大小
                     MediaStore.Audio.Media.SIZE,
-                    //视频的播放地址
+                    // 音频的播放地址
                     MediaStore.Audio.Media.DATA,
                     //音频的演唱者
                     MediaStore.Audio.Media.ARTIST,
