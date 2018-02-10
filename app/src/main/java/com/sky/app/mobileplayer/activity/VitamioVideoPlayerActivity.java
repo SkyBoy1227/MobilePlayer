@@ -419,6 +419,9 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
         if (mediaItems != null && mediaItems.size() > 0) {
             position--;
             if (position >= 0) {
+                if (videoView != null) {
+                    videoView.stopPlayback();
+                }
                 MediaItem item = mediaItems.get(position);
                 tvName.setText(item.getName());
                 isNetUri = utils.isNetUri(item.getData());
@@ -439,6 +442,9 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
         if (mediaItems != null && mediaItems.size() > 0) {
             position++;
             if (position < mediaItems.size()) {
+                if (videoView != null) {
+                    videoView.stopPlayback();
+                }
                 MediaItem item = mediaItems.get(position);
                 tvName.setText(item.getName());
                 isNetUri = utils.isNetUri(item.getData());

@@ -395,6 +395,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         if (mediaItems != null && mediaItems.size() > 0) {
             position--;
             if (position >= 0) {
+                if (videoView != null) {
+                    videoView.stopPlayback();
+                }
                 MediaItem item = mediaItems.get(position);
                 tvName.setText(item.getName());
                 isNetUri = utils.isNetUri(item.getData());
@@ -415,6 +418,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         if (mediaItems != null && mediaItems.size() > 0) {
             position++;
             if (position < mediaItems.size()) {
+                if (videoView != null) {
+                    videoView.stopPlayback();
+                }
                 MediaItem item = mediaItems.get(position);
                 tvName.setText(item.getName());
                 isNetUri = utils.isNetUri(item.getData());
