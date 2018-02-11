@@ -3,6 +3,8 @@ package com.sky.app.mobileplayer.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.sky.app.mobileplayer.service.MusicPlayerService;
+
 /**
  * Created with Android Studio.
  * 描述: 缓存工具类
@@ -37,5 +39,32 @@ public class CacheUtils {
     public static String getString(Context context, String key) {
         SharedPreferences preferences = context.getSharedPreferences("sky", Context.MODE_PRIVATE);
         return preferences.getString(key, "");
+    }
+
+    /**
+     * 保存播放模式
+     *
+     * @param context
+     * @param key
+     * @param value
+     */
+    public static void putPlayMode(Context context, String key, int value) {
+        SharedPreferences preferences = context.getSharedPreferences("sky", Context.MODE_PRIVATE);
+        preferences.edit()
+                .putInt(key, value)
+                .apply();
+    }
+
+
+    /**
+     * 得到播放模式
+     *
+     * @param context
+     * @param key
+     * @return
+     */
+    public static int getPlayMode(Context context, String key) {
+        SharedPreferences preferences = context.getSharedPreferences("sky", Context.MODE_PRIVATE);
+        return preferences.getInt(key, MusicPlayerService.REPEAT_NORMAL);
     }
 }

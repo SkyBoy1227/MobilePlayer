@@ -22,6 +22,7 @@ import com.sky.app.mobileplayer.IMusicPlayerService;
 import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.activity.AudioPlayerActivity;
 import com.sky.app.mobileplayer.domain.MediaItem;
+import com.sky.app.mobileplayer.utils.CacheUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +41,26 @@ import java.util.concurrent.Executors;
 public class MusicPlayerService extends Service {
 
     public static final String OPENAUDIO = "com.sky.app.mobileplayer_OPENAUDIO";
+
+    /**
+     * 顺序播放
+     */
+    public static final int REPEAT_NORMAL = 1;
+
+    /**
+     * 单曲循环
+     */
+    public static final int REPEAT_SINGLE = 2;
+
+    /**
+     * 全部循环
+     */
+    public static final int REPEAT_ALL = 3;
+
+    /**
+     * 播放模式：默认顺序播放
+     */
+    private int playMode = REPEAT_NORMAL;
 
     private MusicPlayerService service = MusicPlayerService.this;
 
@@ -143,6 +164,8 @@ public class MusicPlayerService extends Service {
     public void onCreate() {
         super.onCreate();
         threadPool = Executors.newFixedThreadPool(5);
+        playMode = CacheUtils.getPlayMode(this, "playMode");
+        // 加载本地音频数据
         getDataFromLocal();
     }
 
@@ -350,7 +373,8 @@ public class MusicPlayerService extends Service {
      * @param mode
      */
     private void setPlayMode(int mode) {
-
+        playMode = mode;
+        CacheUtils.putPlayMode(this, "playMode", mode);
     }
 
     /**
@@ -359,7 +383,7 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private int getPlayMode() {
-        return 0;
+        return playMode;
     }
 
     /**

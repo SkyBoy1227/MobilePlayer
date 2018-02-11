@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sky.app.mobileplayer.IMusicPlayerService;
 import com.sky.app.mobileplayer.R;
@@ -83,6 +84,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
             service = IMusicPlayerService.Stub.asInterface(binder);
             if (service != null) {
                 try {
+                    // 当服务连接时校验播放模式
+                    checkPlayMode();
                     if (!notification) {
                         service.openAudio(position);
                     } else {
@@ -200,6 +203,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         if (v == btnAudioPlayMode) {
             // Handle clicks for btnAudioPlayMode
+            setPlayMode();
         } else if (v == btnAudioPre) {
             // Handle clicks for btnAudioPre
         } else if (v == btnAudioStartPause) {
@@ -225,6 +229,49 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
             // Handle clicks for btnAudioNext
         } else if (v == btnLyrics) {
             // Handle clicks for btnLyrics
+        }
+    }
+
+    /**
+     * 设置播放模式
+     */
+    private void setPlayMode() {
+        try {
+            int playMode = service.getPlayMode();
+            if (playMode == MusicPlayerService.REPEAT_NORMAL) {
+                playMode = MusicPlayerService.REPEAT_SINGLE;
+                btnAudioPlayMode.setBackgroundResource(R.drawable.btn_audio_play_mode_single_selector);
+                Toast.makeText(this, "单曲循环", Toast.LENGTH_SHORT).show();
+            } else if (playMode == MusicPlayerService.REPEAT_SINGLE) {
+                playMode = MusicPlayerService.REPEAT_ALL;
+                btnAudioPlayMode.setBackgroundResource(R.drawable.btn_audio_play_mode_all_selector);
+                Toast.makeText(this, "全部循环", Toast.LENGTH_SHORT).show();
+            } else if (playMode == MusicPlayerService.REPEAT_ALL) {
+                playMode = MusicPlayerService.REPEAT_NORMAL;
+                btnAudioPlayMode.setBackgroundResource(R.drawable.btn_audio_play_mode_normal_selector);
+                Toast.makeText(this, "顺序播放", Toast.LENGTH_SHORT).show();
+            }
+            service.setPlayMode(playMode);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 校验播放模式，完成图片设置
+     */
+    private void checkPlayMode() {
+        try {
+            int playMode = service.getPlayMode();
+            if (playMode == MusicPlayerService.REPEAT_NORMAL) {
+                btnAudioPlayMode.setBackgroundResource(R.drawable.btn_audio_play_mode_normal_selector);
+            } else if (playMode == MusicPlayerService.REPEAT_SINGLE) {
+                btnAudioPlayMode.setBackgroundResource(R.drawable.btn_audio_play_mode_single_selector);
+            } else if (playMode == MusicPlayerService.REPEAT_ALL) {
+                btnAudioPlayMode.setBackgroundResource(R.drawable.btn_audio_play_mode_all_selector);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
