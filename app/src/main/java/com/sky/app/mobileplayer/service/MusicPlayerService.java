@@ -31,6 +31,8 @@ import java.util.concurrent.Executors;
  */
 public class MusicPlayerService extends Service {
 
+    public static final String OPENAUDIO = "com.sky.app.mobileplayer_OPENAUDIO";
+
     private MusicPlayerService service = MusicPlayerService.this;
 
     private ArrayList<MediaItem> mediaItems;
@@ -201,6 +203,8 @@ public class MusicPlayerService extends Service {
                 mediaPlayer = new MediaPlayer();
                 // 设置监听：播放出错，播放完成，准备好
                 mediaPlayer.setOnPreparedListener(mp -> {
+                    // 通知Activity来获取信息
+                    notifyChange(OPENAUDIO);
                     start();
                 });
                 mediaPlayer.setOnCompletionListener(mp -> {
@@ -218,6 +222,16 @@ public class MusicPlayerService extends Service {
         } else {
             Toast.makeText(service, "对不起，还没有数据", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * 根据动作发广播
+     *
+     * @param action
+     */
+    private void notifyChange(String action) {
+        Intent intent = new Intent(action);
+        sendBroadcast(intent);
     }
 
     /**
@@ -265,7 +279,7 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private String getArtist() {
-        return "";
+        return mediaItem.getArtist();
     }
 
     /**
@@ -274,7 +288,7 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private String getName() {
-        return "";
+        return mediaItem.getName();
     }
 
     /**

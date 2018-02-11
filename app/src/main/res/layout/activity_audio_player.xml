@@ -22,7 +22,6 @@
             android:layout_alignBottom="@id/iv_icon"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
-            android:text="张学友"
             android:textColor="#ffffff"
             android:textSize="14sp" />
 
@@ -32,7 +31,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/iv_icon"
             android:layout_centerHorizontal="true"
-            android:text="吻别"
             android:textColor="#ffffff"
             android:textSize="18sp" />
     </RelativeLayout>

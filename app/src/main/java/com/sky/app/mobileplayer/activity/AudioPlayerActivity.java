@@ -1,8 +1,10 @@
 package com.sky.app.mobileplayer.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -51,6 +53,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
      * 服务的代理类，通过它可以调用服务的方法
      */
     private IMusicPlayerService service;
+    private MyReceiver receiver;
     private ServiceConnection conn = new ServiceConnection() {
         /**
          * 当连接成功的时候回调这个方法
@@ -155,9 +158,34 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initData();
         findViews();
         getData();
         bindAndStartService();
+    }
+
+    private void initData() {
+        receiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MusicPlayerService.OPENAUDIO);
+        registerReceiver(receiver, intentFilter);
+    }
+
+    class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            showViewData();
+        }
+    }
+
+    private void showViewData() {
+        try {
+            tvArtist.setText(service.getArtist());
+            tvName.setText(service.getName());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private void bindAndStartService() {
@@ -170,5 +198,14 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
 
     private void getData() {
         position = getIntent().getIntExtra("position", 0);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+        super.onDestroy();
     }
 }
