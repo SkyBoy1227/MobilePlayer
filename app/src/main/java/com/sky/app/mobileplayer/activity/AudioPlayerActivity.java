@@ -59,11 +59,19 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     private int position;
 
     /**
+     * 是否来自状态栏
+     * true:状态栏
+     * false:音乐列表
+     */
+    private boolean notification;
+
+    /**
      * 服务的代理类，通过它可以调用服务的方法
      */
     private IMusicPlayerService service;
     private MyReceiver receiver;
     private Utils utils;
+
     private ServiceConnection conn = new ServiceConnection() {
         /**
          * 当连接成功的时候回调这个方法
@@ -75,7 +83,11 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
             service = IMusicPlayerService.Stub.asInterface(binder);
             if (service != null) {
                 try {
-                    service.openAudio(position);
+                    if (!notification) {
+                        service.openAudio(position);
+                    } else {
+                        showViewData();
+                    }
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -98,7 +110,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
             }
         }
     };
-
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -265,7 +276,10 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void getData() {
-        position = getIntent().getIntExtra("position", 0);
+        notification = getIntent().getBooleanExtra("notification", false);
+        if (!notification) {
+            position = getIntent().getIntExtra("position", 0);
+        }
     }
 
     @Override

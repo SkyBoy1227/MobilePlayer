@@ -257,6 +257,7 @@ public class MusicPlayerService extends Service {
         // 当播放歌曲的时候，在状态栏显示正在播放，点击的时候，可以进入音乐播放页面
         manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(this, AudioPlayerActivity.class);
+        // 标识来自状态栏
         intent.putExtra("notification", true);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = new Notification.Builder(this)
