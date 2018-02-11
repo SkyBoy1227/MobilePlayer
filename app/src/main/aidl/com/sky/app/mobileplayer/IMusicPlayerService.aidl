@@ -62,12 +62,12 @@ interface IMusicPlayerService {
     String getData();
 
     /**
-     * 播放下一个
+     * 播放下一曲
      */
     void next();
 
     /**
-     * 播放上一个
+     * 播放上一曲
      */
     void pre();
 

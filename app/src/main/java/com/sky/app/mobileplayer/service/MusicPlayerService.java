@@ -253,6 +253,12 @@ public class MusicPlayerService extends Service {
                 });
                 mediaPlayer.setDataSource(mediaItem.getData());
                 mediaPlayer.prepareAsync();
+
+                if (playMode == REPEAT_SINGLE) {
+                    mediaPlayer.setLooping(true);
+                } else {
+                    mediaPlayer.setLooping(false);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -354,17 +360,83 @@ public class MusicPlayerService extends Service {
     }
 
     /**
-     * 播放下一个
+     * 播放下一曲
      */
     private void next() {
+        // 根据当前的播放模式，设置下一个的位置
+        setNextPosition();
+        // 根据当前的播放模式和下标去播放音频
+        openNextAudio();
+    }
 
+    private void openNextAudio() {
+        if (playMode == MusicPlayerService.REPEAT_NORMAL) {
+            if (position >= mediaItems.size()) {
+                position = mediaItems.size() - 1;
+            } else {
+                openAudio(position);
+            }
+        } else if (playMode == MusicPlayerService.REPEAT_SINGLE) {
+            openAudio(position);
+        } else if (playMode == MusicPlayerService.REPEAT_ALL) {
+            openAudio(position);
+        }
+    }
+
+    private void setNextPosition() {
+        if (playMode == MusicPlayerService.REPEAT_NORMAL) {
+            position++;
+        } else if (playMode == MusicPlayerService.REPEAT_SINGLE) {
+            position++;
+            if (position >= mediaItems.size()) {
+                position = 0;
+            }
+        } else if (playMode == MusicPlayerService.REPEAT_ALL) {
+            position++;
+            if (position >= mediaItems.size()) {
+                position = 0;
+            }
+        }
     }
 
     /**
-     * 播放上一个
+     * 播放上一曲
      */
     private void pre() {
+        // 根据当前的播放模式，设置上一个的位置
+        setPrePosition();
+        // 根据当前的播放模式和下标去播放音频
+        openPreAudio();
+    }
 
+    private void openPreAudio() {
+        if (playMode == MusicPlayerService.REPEAT_NORMAL) {
+            if (position < 0) {
+                position = 0;
+            } else {
+                openAudio(position);
+            }
+        } else if (playMode == MusicPlayerService.REPEAT_SINGLE) {
+            openAudio(position);
+        } else if (playMode == MusicPlayerService.REPEAT_ALL) {
+            openAudio(position);
+        }
+    }
+
+    private void setPrePosition() {
+        if (playMode == MusicPlayerService.REPEAT_NORMAL) {
+            position--;
+        } else if (playMode == MusicPlayerService.REPEAT_SINGLE) {
+            position--;
+            if (position < 0) {
+                position = mediaItems.size() - 1;
+            }
+        } else if (playMode == MusicPlayerService.REPEAT_ALL) {
+            position++;
+            if (position < 0) {
+                position = mediaItems.size() - 1;
+            }
+        }
     }
 
     /**

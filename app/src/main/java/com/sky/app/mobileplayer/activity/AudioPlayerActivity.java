@@ -206,6 +206,13 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
             setPlayMode();
         } else if (v == btnAudioPre) {
             // Handle clicks for btnAudioPre
+            if (service != null) {
+                try {
+                    service.pre();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         } else if (v == btnAudioStartPause) {
             // Handle clicks for btnAudioStartPause
             if (service != null) {
@@ -227,6 +234,13 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
             }
         } else if (v == btnAudioNext) {
             // Handle clicks for btnAudioNext
+            if (service != null) {
+                try {
+                    service.next();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         } else if (v == btnLyrics) {
             // Handle clicks for btnLyrics
         }
@@ -333,9 +347,15 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     protected void onDestroy() {
         // 移除消息
         handler.removeCallbacksAndMessages(null);
+        // 取消注册广播
         if (receiver != null) {
             unregisterReceiver(receiver);
             receiver = null;
+        }
+        // 解绑服务
+        if (conn != null) {
+            unbindService(conn);
+            conn = null;
         }
         super.onDestroy();
     }
