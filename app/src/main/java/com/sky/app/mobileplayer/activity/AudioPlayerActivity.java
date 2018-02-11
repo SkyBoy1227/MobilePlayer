@@ -1,5 +1,6 @@
 package com.sky.app.mobileplayer.activity;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,7 +9,9 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import com.sky.app.mobileplayer.IMusicPlayerService;
 import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.service.MusicPlayerService;
+import com.sky.app.mobileplayer.utils.Utils;
 
 /**
  * Created with Android Studio.
@@ -32,6 +36,11 @@ import com.sky.app.mobileplayer.service.MusicPlayerService;
  * @version ${VERSION}
  */
 public class AudioPlayerActivity extends AppCompatActivity implements View.OnClickListener {
+
+    /**
+     * 进度更新
+     */
+    private static final int PROGRESS = 1;
 
     private ImageView ivIcon;
     private TextView tvArtist;
@@ -54,6 +63,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
      */
     private IMusicPlayerService service;
     private MyReceiver receiver;
+    private Utils utils;
     private ServiceConnection conn = new ServiceConnection() {
         /**
          * 当连接成功的时候回调这个方法
@@ -89,6 +99,33 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         }
     };
 
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case PROGRESS:
+                    try {
+                        // 得到当前进度
+                        int currentPosition = service.getCurrentPosition();
+                        // 设置进度
+                        seekbarAudio.setProgress(currentPosition);
+                        // 设置时间文本
+                        tvTime.setText(utils.stringForTime(currentPosition) + "/" + utils.stringForTime(service.getDuration()));
+                        // 每秒更新一次
+                        handler.removeMessages(PROGRESS);
+                        handler.sendEmptyMessageDelayed(PROGRESS, 1000);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     /**
      * Find the Views in the layout<br />
      * <br />
@@ -115,6 +152,31 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         btnAudioStartPause.setOnClickListener(this);
         btnAudioNext.setOnClickListener(this);
         btnLyrics.setOnClickListener(this);
+
+        seekbarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    try {
+                        if (service != null) {
+                            service.seekTo(progress);
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     /**
@@ -165,6 +227,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initData() {
+        utils = new Utils();
+        // 注册广播
         receiver = new MyReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(MusicPlayerService.OPENAUDIO);
@@ -183,6 +247,10 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         try {
             tvArtist.setText(service.getArtist());
             tvName.setText(service.getName());
+            // 设置进度条的最大值
+            seekbarAudio.setMax(service.getDuration());
+            // 发送消息
+            handler.sendEmptyMessage(PROGRESS);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -202,6 +270,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     protected void onDestroy() {
+        // 移除消息
+        handler.removeCallbacksAndMessages(null);
         if (receiver != null) {
             unregisterReceiver(receiver);
             receiver = null;

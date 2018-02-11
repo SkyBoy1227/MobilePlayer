@@ -1,11 +1,17 @@
 package com.sky.app.mobileplayer.service;
 
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
@@ -13,6 +19,8 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.sky.app.mobileplayer.IMusicPlayerService;
+import com.sky.app.mobileplayer.R;
+import com.sky.app.mobileplayer.activity.AudioPlayerActivity;
 import com.sky.app.mobileplayer.domain.MediaItem;
 
 import java.io.IOException;
@@ -52,6 +60,8 @@ public class MusicPlayerService extends Service {
      */
     private MediaItem mediaItem;
     private MediaPlayer mediaPlayer;
+    private NotificationManager manager;
+
     private IMusicPlayerService.Stub stub = new IMusicPlayerService.Stub() {
         @Override
         public void openAudio(int position) throws RemoteException {
@@ -121,6 +131,11 @@ public class MusicPlayerService extends Service {
         @Override
         public boolean isPlaying() throws RemoteException {
             return service.isPlaying();
+        }
+
+        @Override
+        public void seekTo(int position) throws RemoteException {
+            mediaPlayer.seekTo(position);
         }
     };
 
@@ -197,7 +212,6 @@ public class MusicPlayerService extends Service {
             mediaItem = mediaItems.get(position);
             if (mediaPlayer != null) {
                 mediaPlayer.reset();
-                mediaPlayer.release();
             }
             try {
                 mediaPlayer = new MediaPlayer();
@@ -237,8 +251,21 @@ public class MusicPlayerService extends Service {
     /**
      * 播放音乐
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void start() {
         mediaPlayer.start();
+        // 当播放歌曲的时候，在状态栏显示正在播放，点击的时候，可以进入音乐播放页面
+        manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent(this, AudioPlayerActivity.class);
+        intent.putExtra("notification", true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.notification_music_playing)
+                .setContentTitle("321音乐")
+                .setContentText("正在播放..." + getName())
+                .setContentIntent(pendingIntent)
+                .build();
+        manager.notify(1, notification);
     }
 
     /**
@@ -246,6 +273,8 @@ public class MusicPlayerService extends Service {
      */
     private void pause() {
         mediaPlayer.pause();
+        // 取消掉通知栏信息
+        manager.cancel(1);
     }
 
     /**
@@ -261,7 +290,7 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private int getCurrentPosition() {
-        return 0;
+        return mediaPlayer.getCurrentPosition();
     }
 
     /**
@@ -270,7 +299,7 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private int getDuration() {
-        return 0;
+        return mediaPlayer.getDuration();
     }
 
     /**
