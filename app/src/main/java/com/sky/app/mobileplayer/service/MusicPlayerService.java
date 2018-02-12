@@ -432,7 +432,7 @@ public class MusicPlayerService extends Service {
                 position = mediaItems.size() - 1;
             }
         } else if (playMode == MusicPlayerService.REPEAT_ALL) {
-            position++;
+            position--;
             if (position < 0) {
                 position = mediaItems.size() - 1;
             }
@@ -446,6 +446,12 @@ public class MusicPlayerService extends Service {
      */
     private void setPlayMode(int mode) {
         playMode = mode;
+        // 如果模式为单曲循环，则不能触发onCompletionListener
+        if (playMode == REPEAT_SINGLE) {
+            mediaPlayer.setLooping(true);
+        } else {
+            mediaPlayer.setLooping(false);
+        }
         CacheUtils.putPlayMode(this, "playMode", mode);
     }
 
