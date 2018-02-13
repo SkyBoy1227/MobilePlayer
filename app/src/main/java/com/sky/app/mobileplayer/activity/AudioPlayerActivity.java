@@ -1,11 +1,9 @@
 package com.sky.app.mobileplayer.activity;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -24,8 +22,13 @@ import android.widget.Toast;
 
 import com.sky.app.mobileplayer.IMusicPlayerService;
 import com.sky.app.mobileplayer.R;
+import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.service.MusicPlayerService;
 import com.sky.app.mobileplayer.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created with Android Studio.
@@ -70,7 +73,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
      * 服务的代理类，通过它可以调用服务的方法
      */
     private IMusicPlayerService service;
-    private MyReceiver receiver;
+    //    private MyReceiver receiver;
     private Utils utils;
 
     private ServiceConnection conn = new ServiceConnection() {
@@ -300,20 +303,28 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
 
     private void initData() {
         utils = new Utils();
-        // 注册广播
-        receiver = new MyReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MusicPlayerService.OPENAUDIO);
-        registerReceiver(receiver, intentFilter);
+//        // 注册广播
+//        receiver = new MyReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(MusicPlayerService.OPENAUDIO);
+//        registerReceiver(receiver, intentFilter);
+
+        // 注册
+        EventBus.getDefault().register(this);
     }
 
-    class MyReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            showViewData();
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showData(MediaItem mediaItem) {
+        showViewData();
     }
+
+//    class MyReceiver extends BroadcastReceiver {
+//
+//        @Override`
+//        public void onReceive(Context context, Intent intent) {
+//            showViewData();
+//        }
+//    }
 
     private void showViewData() {
         try {
@@ -347,11 +358,13 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     protected void onDestroy() {
         // 移除消息
         handler.removeCallbacksAndMessages(null);
-        // 取消注册广播
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-            receiver = null;
-        }
+//        // 取消注册广播
+//        if (receiver != null) {
+//            unregisterReceiver(receiver);
+//            receiver = null;
+//        }
+        // 解注册
+        EventBus.getDefault().unregister(this);
         // 解绑服务
         if (conn != null) {
             unbindService(conn);

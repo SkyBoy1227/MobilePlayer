@@ -24,6 +24,8 @@ import com.sky.app.mobileplayer.activity.AudioPlayerActivity;
 import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.utils.CacheUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -240,8 +242,9 @@ public class MusicPlayerService extends Service {
                 mediaPlayer = new MediaPlayer();
                 // 设置监听：播放出错，播放完成，准备好
                 mediaPlayer.setOnPreparedListener(mp -> {
-                    // 通知Activity来获取信息
-                    notifyChange(OPENAUDIO);
+//                    // 通知Activity来获取信息
+//                    notifyChange(OPENAUDIO);
+                    EventBus.getDefault().post(mediaItem);
                     start();
                 });
                 mediaPlayer.setOnCompletionListener(mp -> {
@@ -267,15 +270,15 @@ public class MusicPlayerService extends Service {
         }
     }
 
-    /**
-     * 根据动作发广播
-     *
-     * @param action
-     */
-    private void notifyChange(String action) {
-        Intent intent = new Intent(action);
-        sendBroadcast(intent);
-    }
+//    /**
+//     * 根据动作发广播
+//     *
+//     * @param action
+//     */
+//    private void notifyChange(String action) {
+//        Intent intent = new Intent(action);
+//        sendBroadcast(intent);
+//    }
 
     /**
      * 播放音乐
