@@ -41,6 +41,16 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
      * 画笔
      */
     private Paint paint;
+    private Paint whitePaint;
+    /**
+     * 歌词列表中的索引，是第几句歌词
+     */
+    private int index;
+
+    /**
+     * 每行歌词的高
+     */
+    private float textHeight;
 
     public void setLyrics(ArrayList<Lyric> lyrics) {
         this.lyrics = lyrics;
@@ -70,13 +80,36 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (lyrics != null && lyrics.size() > 0) {
-
+            // 绘制歌词：绘制当前句
+            String currentText = lyrics.get(index).getContent();
+            canvas.drawText(currentText, width / 2, height / 2, paint);
+            // 绘制前面部分
+            float tempY = height / 2;
+            for (int i = index - 1; i >= 0; i--) {
+                tempY -= textHeight;
+                if (tempY < 0) {
+                    break;
+                }
+                String preText = lyrics.get(i).getContent();
+                canvas.drawText(preText, width / 2, tempY, whitePaint);
+            }
+            // 绘制后面部分
+            tempY = height / 2;
+            for (int i = index + 1; i < lyrics.size(); i++) {
+                tempY += textHeight;
+                if (tempY > height) {
+                    break;
+                }
+                String nextText = lyrics.get(i).getContent();
+                canvas.drawText(nextText, width / 2, tempY, whitePaint);
+            }
         } else {
             canvas.drawText("没有歌词", width / 2, height / 2, paint);
         }
     }
 
     private void initView() {
+        textHeight = dip2px(20);
         lyrics = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             Lyric lyric = new Lyric();
@@ -88,11 +121,30 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
 
         // 创建画笔
         paint = new Paint();
-        paint.setTextSize(20);
+        paint.setTextSize(dip2px(20));
         paint.setColor(Color.GREEN);
         // 抗锯齿
         paint.setAntiAlias(true);
         // 设置居中对齐
         paint.setTextAlign(Paint.Align.CENTER);
+
+        whitePaint = new Paint();
+        whitePaint.setTextSize(dip2px(20));
+        whitePaint.setColor(Color.WHITE);
+        // 抗锯齿
+        whitePaint.setAntiAlias(true);
+        // 设置居中对齐
+        whitePaint.setTextAlign(Paint.Align.CENTER);
+    }
+
+    /**
+     * dip转换为px
+     *
+     * @param dpValue
+     * @return
+     */
+    public int dip2px(float dpValue) {
+        float scale = getResources().getDisplayMetrics().density;
+        return (int) (scale * dpValue + 0.5f);
     }
 }
