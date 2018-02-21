@@ -2,7 +2,7 @@ package com.sky.app.mobileplayer.domain;
 
 /**
  * Created with Android Studio.
- * 描述: 歌词w
+ * 描述: 歌词
  * Date: 2018/2/15
  * Time: 23:39
  * [00:00.48]编曲：黎偌天

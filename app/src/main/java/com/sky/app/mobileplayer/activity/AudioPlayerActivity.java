@@ -25,6 +25,7 @@ import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.service.MusicPlayerService;
 import com.sky.app.mobileplayer.utils.Utils;
+import com.sky.app.mobileplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,6 +47,11 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
      */
     private static final int PROGRESS = 1;
 
+    /**
+     * 显示歌词
+     */
+    private static final int SHOW_LYRIC = 2;
+
     private ImageView ivIcon;
     private TextView tvArtist;
     private TextView tvName;
@@ -56,6 +62,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     private Button btnAudioStartPause;
     private Button btnAudioNext;
     private Button btnLyrics;
+    private ShowLyricView showLyricView;
 
     /**
      * 音频列表的具体位置
@@ -122,6 +129,19 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case SHOW_LYRIC:
+                    try {
+                        // 1.得到当前的进度
+                        int currentPosition = service.getCurrentPosition();
+                        // 2.把进度传入ShowLyricView控件，并且计算该高亮哪一句
+                        showLyricView.setShowNextLyric(currentPosition);
+                        // 3.实时发送消息
+                        handler.removeMessages(SHOW_LYRIC);
+                        handler.sendEmptyMessage(SHOW_LYRIC);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 case PROGRESS:
                     try {
                         // 得到当前进度
@@ -163,6 +183,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         btnAudioStartPause = findViewById(R.id.btn_audio_start_pause);
         btnAudioNext = findViewById(R.id.btn_audio_next);
         btnLyrics = findViewById(R.id.btn_lyrics);
+        showLyricView = findViewById(R.id.showLyricView);
 
         btnAudioPlayMode.setOnClickListener(this);
         btnAudioPre.setOnClickListener(this);
@@ -315,6 +336,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showData(MediaItem mediaItem) {
+        // 发消息开始歌词同步
+        handler.sendEmptyMessage(SHOW_LYRIC);
         showViewData();
     }
 

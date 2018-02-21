@@ -52,6 +52,21 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
      */
     private float textHeight;
 
+    /**
+     * 当前播放进度
+     */
+    private int currentPosition;
+
+    /**
+     * 时间戳，什么时刻高亮哪句歌词
+     */
+    private long timePoint;
+
+    /**
+     * 高亮显示的时间或者休眠时间
+     */
+    private long sleepTime;
+
     public void setLyrics(ArrayList<Lyric> lyrics) {
         this.lyrics = lyrics;
     }
@@ -146,5 +161,30 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     public int dip2px(float dpValue) {
         float scale = getResources().getDisplayMetrics().density;
         return (int) (scale * dpValue + 0.5f);
+    }
+
+
+    /**
+     * 根据当前播放的位置，找出该高亮显示哪句歌词
+     *
+     * @param currentPosition
+     */
+    public void setShowNextLyric(int currentPosition) {
+        this.currentPosition = currentPosition;
+        if (lyrics != null && lyrics.size() > 0) {
+            for (int i = 1; i < lyrics.size(); i++) {
+                if (currentPosition < lyrics.get(i).getTimePoint()) {
+                    int tempIndex = i - 1;
+                    if (currentPosition >= lyrics.get(tempIndex).getTimePoint()) {
+                        // 当前正在播放的那句歌词
+                        index = tempIndex;
+                        timePoint = lyrics.get(tempIndex).getTimePoint();
+                        sleepTime = lyrics.get(tempIndex).getSleepTime();
+                    }
+                }
+            }
+            // 重新绘制
+            invalidate();
+        }
     }
 }
