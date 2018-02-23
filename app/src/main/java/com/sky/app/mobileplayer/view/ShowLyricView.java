@@ -57,17 +57,17 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 当前播放进度
      */
-    private int currentPosition;
+    private float currentPosition;
 
     /**
      * 时间戳，什么时刻高亮哪句歌词
      */
-    private long timePoint;
+    private float timePoint;
 
     /**
      * 高亮显示的时间或者休眠时间
      */
-    private long sleepTime;
+    private float sleepTime;
 
     public void setLyrics(List<Lyric> lyrics) {
         this.lyrics = lyrics;
@@ -97,6 +97,19 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (lyrics != null && lyrics.size() > 0 && index < lyrics.size()) {
+            // 往上推移
+            float flush;
+            if (sleepTime == 0) {
+                flush = 0;
+            } else {
+                // 平移
+                // 这一句所花的时间 ：休眠时间 = 移动的距离 ： 总距离（行高）
+                // 移动的距离 =  (这一句所花的时间 ：休眠时间)* 总距离（行高）
+//                float delta = (currentPosition - timePoint) / sleepTime * textHeight;
+                // 屏幕的的坐标 = 行高 + 移动的距离
+                flush = textHeight + (currentPosition - timePoint) / sleepTime * textHeight;
+            }
+            canvas.translate(0, -flush);
             // 绘制歌词：绘制当前句
             String currentText = lyrics.get(index).getContent();
             canvas.drawText(currentText, width / 2, height / 2, paint);
