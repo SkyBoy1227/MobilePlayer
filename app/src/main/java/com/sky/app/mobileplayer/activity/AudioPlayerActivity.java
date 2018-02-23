@@ -24,12 +24,15 @@ import com.sky.app.mobileplayer.IMusicPlayerService;
 import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.service.MusicPlayerService;
+import com.sky.app.mobileplayer.utils.LyricUtils;
 import com.sky.app.mobileplayer.utils.Utils;
 import com.sky.app.mobileplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
 
 /**
  * Created with Android Studio.
@@ -336,9 +339,33 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showData(MediaItem mediaItem) {
-        // 发消息开始歌词同步
-        handler.sendEmptyMessage(SHOW_LYRIC);
+        showLyric();
         showViewData();
+    }
+
+    /**
+     * 显示歌词
+     */
+    private void showLyric() {
+        LyricUtils lyricUtils = new LyricUtils();
+        try {
+            // 得到歌曲播放的绝对路径
+            String path = service.getData();
+            path = path.substring(0, path.lastIndexOf("."));
+            File file = new File(path + ".lrc");
+            if (!file.exists()) {
+                file = new File(path + ".txt");
+            }
+            // 传入歌词文件
+            lyricUtils.readLyricFile(file);
+            showLyricView.setLyrics(lyricUtils.getLyrics());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        if (lyricUtils.isExistLyric()) {
+            // 发消息开始歌词同步
+            handler.sendEmptyMessage(SHOW_LYRIC);
+        }
     }
 
 //    class MyReceiver extends BroadcastReceiver {

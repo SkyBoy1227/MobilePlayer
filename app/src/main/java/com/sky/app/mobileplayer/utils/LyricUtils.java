@@ -27,6 +27,15 @@ public class LyricUtils {
     private List<Lyric> lyrics;
 
     /**
+     * 是否存在歌词
+     */
+    private boolean isExistLyric;
+
+    public boolean isExistLyric() {
+        return isExistLyric;
+    }
+
+    /**
      * 得到解析好的歌词列表
      *
      * @return
@@ -44,9 +53,11 @@ public class LyricUtils {
         if (file == null || !file.exists()) {
             // 歌词文件不存在
             lyrics = null;
+            isExistLyric = false;
         } else {
             // 解析歌词
             lyrics = new ArrayList<>();
+            isExistLyric = true;
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "gbk"));
@@ -111,8 +122,8 @@ public class LyricUtils {
             while (pos1 == 0 && pos2 != -1) {
                 // [03:37.32][00:59.73]我在这里欢笑--->[00:59.73]我在这里欢笑-->我在这里欢笑
                 content = content.substring(pos2 + 1);
-                pos1 = line.indexOf("[");
-                pos2 = line.indexOf("]");
+                pos1 = content.indexOf("[");
+                pos2 = content.indexOf("]");
                 if (pos2 != -1) {
                     // 03:37.32-->00:59.73
                     strTime = content.substring(pos1 + 1, pos2);

@@ -8,8 +8,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.sky.app.mobileplayer.domain.Lyric;
+import com.sky.app.mobileplayer.utils.DensityUtil;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with Android Studio.
@@ -25,7 +26,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 歌词列表
      */
-    private ArrayList<Lyric> lyrics;
+    private List<Lyric> lyrics;
 
     /**
      * 控件的宽
@@ -68,7 +69,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
      */
     private long sleepTime;
 
-    public void setLyrics(ArrayList<Lyric> lyrics) {
+    public void setLyrics(List<Lyric> lyrics) {
         this.lyrics = lyrics;
     }
 
@@ -82,7 +83,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
 
     public ShowLyricView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView();
+        initView(context);
     }
 
     @Override
@@ -95,7 +96,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (lyrics != null && lyrics.size() > 0) {
+        if (lyrics != null && lyrics.size() > 0 && index < lyrics.size()) {
             // 绘制歌词：绘制当前句
             String currentText = lyrics.get(index).getContent();
             canvas.drawText(currentText, width / 2, height / 2, paint);
@@ -124,20 +125,20 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
         }
     }
 
-    private void initView() {
-        textHeight = dip2px(20);
-        lyrics = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            Lyric lyric = new Lyric();
-            lyric.setContent(i + "cccccccccccccc" + i);
-            lyric.setTimePoint(1000 * i);
-            lyric.setSleepTime(1500 + i);
-            lyrics.add(lyric);
-        }
+    private void initView(Context context) {
+        textHeight = DensityUtil.dip2px(context, 18);
+//        lyrics = new ArrayList<>();
+//        for (int i = 0; i < 1000; i++) {
+//            Lyric lyric = new Lyric();
+//            lyric.setContent(i + "cccccccccccccc" + i);
+//            lyric.setTimePoint(1000 * i);
+//            lyric.setSleepTime(1500 + i);
+//            lyrics.add(lyric);
+//        }
 
         // 创建画笔
         paint = new Paint();
-        paint.setTextSize(dip2px(20));
+        paint.setTextSize(DensityUtil.dip2px(context, 16));
         paint.setColor(Color.GREEN);
         // 抗锯齿
         paint.setAntiAlias(true);
@@ -145,25 +146,13 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
         paint.setTextAlign(Paint.Align.CENTER);
 
         whitePaint = new Paint();
-        whitePaint.setTextSize(dip2px(20));
+        whitePaint.setTextSize(DensityUtil.dip2px(context, 16));
         whitePaint.setColor(Color.WHITE);
         // 抗锯齿
         whitePaint.setAntiAlias(true);
         // 设置居中对齐
         whitePaint.setTextAlign(Paint.Align.CENTER);
     }
-
-    /**
-     * dip转换为px
-     *
-     * @param dpValue
-     * @return
-     */
-    public int dip2px(float dpValue) {
-        float scale = getResources().getDisplayMetrics().density;
-        return (int) (scale * dpValue + 0.5f);
-    }
-
 
     /**
      * 根据当前播放的位置，找出该高亮显示哪句歌词
@@ -181,7 +170,14 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
                         index = tempIndex;
                         timePoint = lyrics.get(tempIndex).getTimePoint();
                         sleepTime = lyrics.get(tempIndex).getSleepTime();
+                        break;
                     }
+                }
+                // 最后一句歌词
+                if (i == lyrics.size() - 1) {
+                    index = i;
+                    timePoint = lyrics.get(i).getTimePoint();
+                    sleepTime = lyrics.get(i).getSleepTime();
                 }
             }
             // 重新绘制

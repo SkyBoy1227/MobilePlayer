@@ -359,7 +359,7 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private String getData() {
-        return "";
+        return mediaItem.getData();
     }
 
     /**
