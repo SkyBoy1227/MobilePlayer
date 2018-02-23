@@ -42,6 +42,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
      */
     private Paint paint;
     private Paint whitePaint;
+
     /**
      * 歌词列表中的索引，是第几句歌词
      */

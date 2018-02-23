@@ -351,6 +351,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
 
     private void showViewData() {
         try {
+            // 初始化播放按钮的状态
+            btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_pause_selector);
             tvArtist.setText(service.getArtist());
             tvName.setText(service.getName());
             // 设置进度条的最大值
