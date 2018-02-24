@@ -103,6 +103,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
                         service.openAudio(position);
                     } else {
                         showViewData();
+                        showLyric();
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
