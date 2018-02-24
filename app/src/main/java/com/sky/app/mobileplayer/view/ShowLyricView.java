@@ -71,6 +71,8 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
 
     public void setLyrics(List<Lyric> lyrics) {
         this.lyrics = lyrics;
+        // 重置index
+        index = 0;
     }
 
     public ShowLyricView(Context context) {
@@ -187,7 +189,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
                     }
                 }
                 // 最后一句歌词
-                if (i == lyrics.size() - 1) {
+                if (i == lyrics.size() - 1 && currentPosition >= lyrics.get(i).getTimePoint()) {
                     index = i;
                     timePoint = lyrics.get(i).getTimePoint();
                     sleepTime = lyrics.get(i).getSleepTime();
