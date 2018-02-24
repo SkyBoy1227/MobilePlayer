@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,6 +27,7 @@ import com.sky.app.mobileplayer.domain.MediaItem;
 import com.sky.app.mobileplayer.service.MusicPlayerService;
 import com.sky.app.mobileplayer.utils.LyricUtils;
 import com.sky.app.mobileplayer.utils.Utils;
+import com.sky.app.mobileplayer.view.BaseVisualizerView;
 import com.sky.app.mobileplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -66,6 +68,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     private Button btnAudioNext;
     private Button btnLyrics;
     private ShowLyricView showLyricView;
+    private BaseVisualizerView baseVisualizerView;
 
     /**
      * 音频列表的具体位置
@@ -85,6 +88,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     private IMusicPlayerService service;
     //    private MyReceiver receiver;
     private Utils utils;
+    private Visualizer mVisualizer;
 
     private ServiceConnection conn = new ServiceConnection() {
         /**
@@ -104,6 +108,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
                     } else {
                         showViewData();
                         showLyric();
+                        setupVisualizerFxAndUi();
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -188,6 +193,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         btnAudioNext = findViewById(R.id.btn_audio_next);
         btnLyrics = findViewById(R.id.btn_lyrics);
         showLyricView = findViewById(R.id.showLyricView);
+        baseVisualizerView = findViewById(R.id.baseVisualizerView);
 
         btnAudioPlayMode.setOnClickListener(this);
         btnAudioPre.setOnClickListener(this);
@@ -342,6 +348,25 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     public void showData(MediaItem mediaItem) {
         showLyric();
         showViewData();
+        setupVisualizerFxAndUi();
+    }
+
+    /**
+     * 生成一个VisualizerView对象，使音频频谱的波段能够反映到 VisualizerView上
+     */
+    private void setupVisualizerFxAndUi() {
+        try {
+            int audioSessionid = service.getAudioSessionId();
+            System.out.println("audioSessionid==" + audioSessionid);
+            mVisualizer = new Visualizer(audioSessionid);
+            // 参数内必须是2的位数
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+            // 设置允许波形表示，并且捕获它
+            baseVisualizerView.setVisualizer(mVisualizer);
+            mVisualizer.setEnabled(true);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -404,6 +429,14 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         notification = getIntent().getBooleanExtra("notification", false);
         if (!notification) {
             position = getIntent().getIntExtra("position", 0);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mVisualizer != null) {
+            mVisualizer.release();
         }
     }
 
