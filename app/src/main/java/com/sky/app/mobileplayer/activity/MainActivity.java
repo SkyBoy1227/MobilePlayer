@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -45,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private int position;
     private BasePager basePager;
+
+    /**
+     * 是否退出应用
+     */
+    private boolean isExit;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,5 +154,21 @@ public class MainActivity extends AppCompatActivity {
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (position != 0) {
+                rg_bottom_tag.check(R.id.rb_video);
+                return true;
+            } else if (!isExit) {
+                isExit = true;
+                Toast.makeText(this, "再按一次退出！", Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(() -> isExit = false, 2000);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
