@@ -22,7 +22,8 @@
             android:drawableLeft="@drawable/tv_search_drawable_selector"
             android:drawablePadding="5dp"
             android:hint="全网搜索"
-            android:textColor="@drawable/tv_search_color_selector" />
+            android:textColor="@drawable/tv_search_color_selector"
+            android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/iv_voice"
