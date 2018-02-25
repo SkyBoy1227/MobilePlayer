@@ -83,6 +83,7 @@
             android:name=".activity.AudioPlayerActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:launchMode="singleTask" />
+        <activity android:name=".activity.SearchActivity" />
 
         <service android:name=".service.MusicPlayerService">
             <intent-filter>
