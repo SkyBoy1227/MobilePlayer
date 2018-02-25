@@ -433,14 +433,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (mVisualizer != null) {
-            mVisualizer.release();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         // 移除消息
         handler.removeCallbacksAndMessages(null);
@@ -455,6 +447,9 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
         if (conn != null) {
             unbindService(conn);
             conn = null;
+        }
+        if (mVisualizer != null) {
+            mVisualizer.release();
         }
         super.onDestroy();
     }
