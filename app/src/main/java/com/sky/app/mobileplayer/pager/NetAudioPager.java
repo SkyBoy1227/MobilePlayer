@@ -1,13 +1,22 @@
 package com.sky.app.mobileplayer.pager;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.Gravity;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.sky.app.mobileplayer.R;
 import com.sky.app.mobileplayer.base.BasePager;
+import com.sky.app.mobileplayer.utils.CacheUtils;
+import com.sky.app.mobileplayer.utils.Constants;
 import com.sky.app.mobileplayer.utils.LogUtil;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.ViewInject;
+import org.xutils.x;
 
 /**
  * Created with Android Studio.
@@ -19,7 +28,15 @@ import com.sky.app.mobileplayer.utils.LogUtil;
  * @version ${VERSION}
  */
 public class NetAudioPager extends BasePager {
-    private TextView textView;
+
+    @ViewInject(R.id.listView)
+    private ListView listView;
+
+    @ViewInject(R.id.tv_nonet)
+    private TextView tvNonet;
+
+    @ViewInject(R.id.pb_loading)
+    private ProgressBar pbLoading;
 
     public NetAudioPager(Context context) {
         super(context);
@@ -32,11 +49,9 @@ public class NetAudioPager extends BasePager {
      */
     @Override
     public View initView() {
-        textView = new TextView(context);
-        textView.setTextSize(30);
-        textView.setTextColor(Color.RED);
-        textView.setGravity(Gravity.CENTER);
-        return textView;
+        View view = View.inflate(context, R.layout.netaudio_pager, null);
+        x.view().inject(this, view);
+        return view;
     }
 
 
@@ -44,8 +59,39 @@ public class NetAudioPager extends BasePager {
     public void initData() {
         super.initData();
         LogUtil.e("网络音乐页面的数据被初始化了。。。");
+        String savaJson = CacheUtils.getString(context, Constants.ALL_RES_URL);
+        if (!TextUtils.isEmpty(savaJson)) {
+            // 解析Json
+        }
         //联网
         //音频内容
-        textView.setText("网络音乐的内容");
+        getDataFromNet();
+    }
+
+    private void getDataFromNet() {
+        RequestParams params = new RequestParams(Constants.ALL_RES_URL);
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                LogUtil.e("数据获取成功=====" + result);
+                // 保存数据
+                CacheUtils.putString(context, Constants.ALL_RES_URL, result);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                LogUtil.e("数据获取失败=====" + ex.getMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                LogUtil.e("onCancelled=====" + cex.getMessage());
+            }
+
+            @Override
+            public void onFinished() {
+                LogUtil.e("onFinished=====");
+            }
+        });
     }
 }

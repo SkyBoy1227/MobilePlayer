@@ -99,5 +99,8 @@ interface IMusicPlayerService {
      */
     void seekTo(int position);
 
+    /**
+     * 获取音频SessionID
+     */
     int getAudioSessionId();
 }
