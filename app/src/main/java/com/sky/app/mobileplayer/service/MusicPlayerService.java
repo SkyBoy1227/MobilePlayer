@@ -254,8 +254,8 @@ public class MusicPlayerService extends Service {
                 mediaPlayer.setOnPreparedListener(mp -> {
 //                    // 通知Activity来获取信息
 //                    notifyChange(OPENAUDIO);
-                    EventBus.getDefault().post(mediaItem);
                     start();
+                    EventBus.getDefault().post(mediaItem);
                 });
                 mediaPlayer.setOnCompletionListener(mp -> {
                     next();

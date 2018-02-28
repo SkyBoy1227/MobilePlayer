@@ -54,9 +54,10 @@ public class LyricUtils {
     public String getCharset(File file) {
         String charset = "GBK";
         byte[] first3Bytes = new byte[3];
+        BufferedInputStream bis = null;
         try {
             boolean checked = false;
-            BufferedInputStream bis = new BufferedInputStream(
+            bis = new BufferedInputStream(
                     new FileInputStream(file));
             bis.mark(0);
             int read = bis.read(first3Bytes, 0, 3);
@@ -75,7 +76,6 @@ public class LyricUtils {
                 charset = "UTF-8";
                 checked = true;
             }
-            bis.reset();
             if (!checked) {
                 int loc = 0;
                 while ((read = bis.read()) != -1) {
@@ -104,9 +104,16 @@ public class LyricUtils {
                     }
                 }
             }
-            bis.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return charset;
     }
