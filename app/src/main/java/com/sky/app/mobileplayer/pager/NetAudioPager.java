@@ -119,11 +119,13 @@ public class NetAudioPager extends BasePager {
                 LogUtil.e("数据获取成功=====" + result);
                 // 保存数据
                 CacheUtils.putString(context, Constants.ALL_RES_URL, result);
+                processData(result);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 LogUtil.e("数据获取失败=====" + ex.getMessage());
+                showViewData();
             }
 
             @Override

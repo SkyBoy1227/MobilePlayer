@@ -103,4 +103,11 @@ interface IMusicPlayerService {
      * 获取音频SessionID
      */
     int getAudioSessionId();
+
+    /**
+     * 得到当前播放的音乐在列表中的位置
+     *
+     * @return
+     */
+    int getPosition();
 }

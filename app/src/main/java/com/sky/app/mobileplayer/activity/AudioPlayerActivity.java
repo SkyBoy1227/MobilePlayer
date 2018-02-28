@@ -103,12 +103,20 @@ public class AudioPlayerActivity extends AppCompatActivity implements View.OnCli
                 try {
                     // 当服务连接时校验播放模式
                     checkPlayMode();
-                    if (!notification) {
-                        service.openAudio(position);
+                    if (notification) {
+                        // 状态栏进入
+                        showData(null);
+                    } else if (service.isPlaying()) {
+                        if (service.getPosition() == position) {
+                            // 正在播放音乐，且播放的是当前音乐
+                            showData(null);
+                        } else {
+                            // 正在播放音乐，且播放的不是当前音乐
+                            service.openAudio(position);
+                        }
                     } else {
-                        showViewData();
-                        showLyric();
-                        setupVisualizerFxAndUi();
+                        // 没有在播放音乐
+                        service.openAudio(position);
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();

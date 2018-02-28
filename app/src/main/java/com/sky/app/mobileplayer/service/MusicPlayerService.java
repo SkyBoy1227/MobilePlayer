@@ -165,6 +165,11 @@ public class MusicPlayerService extends Service {
         public int getAudioSessionId() throws RemoteException {
             return mediaPlayer.getAudioSessionId();
         }
+
+        @Override
+        public int getPosition() throws RemoteException {
+            return service.getPosition();
+        }
     };
 
     @Override
@@ -478,6 +483,19 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private boolean isPlaying() {
-        return mediaPlayer.isPlaying();
+        if (mediaPlayer != null) {
+            return mediaPlayer.isPlaying();
+        }
+        return false;
     }
+
+    /**
+     * 得到当前播放的音乐在列表中的位置
+     *
+     * @return
+     */
+    private int getPosition() {
+        return position;
+    }
+
 }
