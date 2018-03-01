@@ -158,6 +158,7 @@ public class NetVideoPager extends BasePager {
      * 联网请求数据
      */
     private void getDataFromNet() {
+        pbLoading.setVisibility(View.VISIBLE);
         //联网
         //音频内容
         RequestParams params = new RequestParams(Constants.NET_URL);

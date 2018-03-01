@@ -1,6 +1,7 @@
 package com.sky.app.mobileplayer.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.sky.app.mobileplayer.R;
+import com.sky.app.mobileplayer.activity.ImageDetailActivity;
 import com.sky.app.mobileplayer.domain.NetAudioPagerData;
 import com.sky.app.mobileplayer.utils.Utils;
 
@@ -161,6 +163,11 @@ public class NetAudioPagerAdapter extends BaseAdapter {
                             .load(mediaItem.getImage().getBig().get(0))
                             .apply(options)
                             .into(viewHolder.iv_image_icon);
+                    viewHolder.iv_image_icon.setOnClickListener(v -> {
+                        Intent intent = new Intent(context, ImageDetailActivity.class);
+                        intent.putExtra("img_url", mediaItem.getImage().getBig().get(0));
+                        context.startActivity(intent);
+                    });
                 }
                 break;
             case TYPE_TEXT:

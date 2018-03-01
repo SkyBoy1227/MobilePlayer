@@ -112,6 +112,7 @@ public class NetAudioPager extends BasePager {
     }
 
     private void getDataFromNet() {
+        pbLoading.setVisibility(View.VISIBLE);
         RequestParams params = new RequestParams(Constants.ALL_RES_URL);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override

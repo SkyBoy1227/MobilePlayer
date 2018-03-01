@@ -107,6 +107,9 @@
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:launchMode="singleTask" />
         <activity android:name=".activity.SearchActivity" />
+        <activity
+            android:name=".activity.ImageDetailActivity"
+            android:hardwareAccelerated="false" />
 
         <service android:name=".service.MusicPlayerService">
             <intent-filter>

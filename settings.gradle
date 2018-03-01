@@ -1,1 +1,1 @@
-include ':app', ':StartAllPlayer', ':vitamio', ':speechdemo2'
+include ':app', ':StartAllPlayer', ':vitamio', ':speechdemo2', ':photoview-lib'
