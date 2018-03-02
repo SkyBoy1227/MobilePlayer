@@ -26,6 +26,8 @@ import com.sky.app.mobileplayer.pager.VideoPager;
 
 import java.util.ArrayList;
 
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
+
 /**
  * Created with Android Studio.
  * 描述: 主页面
@@ -159,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (JCVideoPlayer.backPress()) {
+                return true;
+            }
             if (position != 0) {
                 rg_bottom_tag.check(R.id.rb_video);
                 return true;
@@ -170,5 +175,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JCVideoPlayer.releaseAllVideos();
     }
 }

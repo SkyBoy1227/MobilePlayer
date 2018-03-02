@@ -144,16 +144,10 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="下载(原评论)" />
-
-            <TextView
                 android:id="@+id/tv_download_number"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:gravity="center"
-                android:paddingTop="2dp"
                 android:text="下载"
                 android:textColor="#44000000" />
 

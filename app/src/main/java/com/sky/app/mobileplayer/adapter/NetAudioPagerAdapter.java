@@ -139,11 +139,14 @@ public class NetAudioPagerAdapter extends BaseAdapter {
             case TYPE_VIDEO:
                 // 视频
                 bindData(viewHolder, mediaItem);
-                //第一个参数是视频播放地址，第二个参数是显示封面的地址，第三参数是标题
+                // 第一个参数是视频播放地址，第二个参数是显示封面的地址，第三参数是标题
                 viewHolder.jcv_videoplayer.setUp(mediaItem.getVideo().getVideo().get(0), JCVideoPlayerStandard.SCREEN_LAYOUT_LIST, mediaItem.getText());
                 x.image().bind(viewHolder.jcv_videoplayer.thumbImageView, mediaItem.getVideo().getThumbnail().get(0));
                 viewHolder.tv_play_nums.setText(mediaItem.getVideo().getPlaycount() + "次播放");
                 viewHolder.tv_video_duration.setText(utils.stringForTime(mediaItem.getVideo().getDuration() * 1000) + "");
+                if (mediaItem.getTop_comments() != null && mediaItem.getTop_comments().size() > 0) {
+                    viewHolder.tv_commant_context.setText(mediaItem.getTop_comments().get(0).getContent());
+                }
                 break;
             case TYPE_IMAGE:
                 // 图片

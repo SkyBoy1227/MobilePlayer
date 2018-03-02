@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/MobilePlayer.iml" filepath="$PROJECT_DIR$/MobilePlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/StartAllPlayer/StartAllPlayer.iml" filepath="$PROJECT_DIR$/StartAllPlayer/StartAllPlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/photoview-lib/library.iml" filepath="$PROJECT_DIR$/photoview-lib/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/photoview-lib/photoview-lib.iml" filepath="$PROJECT_DIR$/photoview-lib/photoview-lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/speechdemo2/speechdemo2.iml" filepath="$PROJECT_DIR$/speechdemo2/speechdemo2.iml" />
       <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />
     </modules>
